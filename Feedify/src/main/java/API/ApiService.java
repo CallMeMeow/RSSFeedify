@@ -5,12 +5,14 @@
  */
 package API;
 
+import Model.GetFeedsResponse;
 import Model.LoginResponse;
 import Model.LoginResponse.LoginPost;
 import Model.RegisterResponse;
 import Model.RegisterResponse.RegisterPost;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 
 /**
@@ -23,4 +25,7 @@ public interface ApiService {
     
     @POST("login")
     Call<LoginResponse>     login(@Body LoginPost post);
+    
+    @GET("feeds")
+    Call<GetFeedsResponse>  feeds();
 }

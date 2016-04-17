@@ -10,6 +10,7 @@ import Model.RegisterResponse.RegisterPost;
 import API.RestClient;
 import Model.LoginResponse;
 import Model.LoginResponse.LoginPost;
+import Model.UserModel;
 import View.FeedView;
 import View.LoginView;
 import javax.swing.JFrame;
@@ -24,11 +25,13 @@ import retrofit2.Response;
  * @author Bastien
  */
 public class LoginController implements LoginView.OnConnectButtonClick {
+    JFrame window;
+    
     public LoginController(JFrame win) {
-        FeedController FeedVC = new FeedController(win);
-       /* LoginView logView = new LoginView();
+        LoginView logView = new LoginView();
         logView.setOnConnectButtonClick(this);
-        win.setContentPane(logView);*/
+        win.setContentPane(logView);
+        window = win;
     }
     
     
@@ -69,7 +72,10 @@ public class LoginController implements LoginView.OnConnectButtonClick {
                     JOptionPane.showMessageDialog(null, "Connection réussie", "Connection", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(null, "Mauvais nom de compte ou mot de passe", "Connection", JOptionPane.ERROR_MESSAGE);
-                }    
+                }
+                UserModel user = new UserModel();
+                user.Instance.setToken(response.body().getToken());
+                FeedController FeedVC = new FeedController(window);
             }
 
             @Override
