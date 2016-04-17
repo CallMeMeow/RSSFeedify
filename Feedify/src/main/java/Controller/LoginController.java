@@ -10,6 +10,7 @@ import Model.RegisterResponse.RegisterPost;
 import API.RestClient;
 import Model.LoginResponse;
 import Model.LoginResponse.LoginPost;
+import View.FeedView;
 import View.LoginView;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -24,9 +25,10 @@ import retrofit2.Response;
  */
 public class LoginController implements LoginView.OnConnectButtonClick {
     public LoginController(JFrame win) {
-        LoginView logView = new LoginView();
+        FeedController FeedVC = new FeedController(win);
+       /* LoginView logView = new LoginView();
         logView.setOnConnectButtonClick(this);
-        win.setContentPane(logView);
+        win.setContentPane(logView);*/
     }
     
     
