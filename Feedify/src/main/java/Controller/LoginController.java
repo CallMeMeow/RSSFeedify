@@ -27,7 +27,6 @@ public class LoginController implements LoginView.OnConnectButtonClick {
         LoginView logView = new LoginView();
         logView.setOnConnectButtonClick(this);
         win.setContentPane(logView);
-        
     }
     
     
@@ -64,6 +63,7 @@ public class LoginController implements LoginView.OnConnectButtonClick {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.body() != null) {
+                    System.out.println(response.body().getToken());
                     JOptionPane.showMessageDialog(null, "Connection réussie", "Connection", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(null, "Mauvais nom de compte ou mot de passe", "Connection", JOptionPane.ERROR_MESSAGE);
