@@ -5,21 +5,6 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
       <group>
-        <file>file:/C:/Users/Bastien/Documents/NetBeansProjects/Feedify/build.gradle</file>
-        <file>file:/C:/Users/Bastien/Documents/NetBeansProjects/Feedify/src/main/java/Window.java</file>
-        <file>file:/C:/Users/Bastien/Documents/NetBeansProjects/Feedify/src/main/java/Controller/LoginController.java</file>
-        <file>file:/C:/Users/Bastien/Documents/NetBeansProjects/Feedify/.nb-gradle-properties</file>
-        <file>file:/C:/Users/Bastien/Documents/NetBeansProjects/Feedify/src/main/java/Model/LoginResponse.java</file>
-        <file>file:/C:/Users/Bastien/Documents/NetBeansProjects/Feedify/src/main/java/View/LoginView.java</file>
-        <file>file:/C:/Users/Bastien/Documents/NetBeansProjects/Feedify/src/main/java/API/ApiService.java</file>
-        <file>file:/C:/Users/Bastien/Documents/NetBeansProjects/Feedify/settings.gradle</file>
-        <file>file:/C:/Users/Bastien/Documents/NetBeansProjects/Feedify/src/main/java/API/RestClient.java</file>
-        <file>file:/C:/Users/Bastien/Documents/NetBeansProjects/Feedify/src/main/java/Model/RegisterResponse.java</file>
-      </group>
-    </open-files>
-    <editor-bookmarks lastBookmarkId="0" xmlns="http://www.netbeans.org/ns/editor-bookmarks/2"/>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-      <group>
         <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/Controller/LoginController.java</file>
         <file>file:/C:/Users/Bastien/Documents/NetBeansProjects/Feedify/src/main/java/Window.java</file>
         <file>file:/C:/Users/Bastien/Documents/NetBeansProjects/Feedify/src/main/java/Controller/LoginController.java</file>
@@ -36,6 +21,23 @@
         <file>file:/C:/Users/Bastien/Documents/NetBeansProjects/Feedify/src/main/java/API/ApiService.java</file>
         <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/Model/RegisterResponse.java</file>
         <file>file:/C:/Users/Bastien/Documents/NetBeansProjects/Feedify/src/main/java/Model/RegisterResponse.java</file>
+        <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/Model/LoginResponse.java</file>
+        <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/API/RestClient.java</file>
+        <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/View/FeedView.java</file>
+      </group>
+    </open-files>
+    <editor-bookmarks lastBookmarkId="0" xmlns="http://www.netbeans.org/ns/editor-bookmarks/2"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+      <group>
+        <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/Controller/LoginController.java</file>
+        <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/Model/UserModel.java</file>
+        <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/Controller/FeedController.java</file>
+        <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/Window.java</file>
+        <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/API/ApiService.java</file>
+        <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/View/LoginView.java</file>
+        <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/Model/feed.java</file>
+        <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/Model/RegisterResponse.java</file>
+        <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/Model/GetFeedsResponse.java</file>
         <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/Model/LoginResponse.java</file>
         <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/API/RestClient.java</file>
         <file>file:/E:/Projets/RSSFeedify/Feedify/src/main/java/View/FeedView.java</file>

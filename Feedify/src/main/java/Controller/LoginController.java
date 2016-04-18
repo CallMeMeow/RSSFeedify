@@ -68,14 +68,12 @@ public class LoginController implements LoginView.OnConnectButtonClick {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.body() != null) {
-                    System.out.println(response.body().getToken());
-                    JOptionPane.showMessageDialog(null, "Connection réussie", "Connection", JOptionPane.INFORMATION_MESSAGE);
+                    UserModel user = new UserModel();
+                    user.Instance.setToken(response.body().getToken());
+                    FeedController FeedVC = new FeedController(window);
                 } else {
                     JOptionPane.showMessageDialog(null, "Mauvais nom de compte ou mot de passe", "Connection", JOptionPane.ERROR_MESSAGE);
                 }
-                UserModel user = new UserModel();
-                user.Instance.setToken(response.body().getToken());
-                FeedController FeedVC = new FeedController(window);
             }
 
             @Override

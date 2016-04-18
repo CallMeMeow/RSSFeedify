@@ -11,6 +11,7 @@ import Model.UserModel;
 import Model.feed;
 import View.FeedView;
 import java.util.List;
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -21,8 +22,10 @@ import retrofit2.Response;
  * @author Bastien
  */
 public  class FeedController {
+    FeedView feedView;
+    
     public FeedController(JFrame win) {
-        FeedView feedView = new FeedView();
+        feedView = new FeedView();
         win.setContentPane(feedView);
         win.getContentPane().repaint();
         win.getContentPane().revalidate();
@@ -37,8 +40,14 @@ public  class FeedController {
             public void onResponse(Call<GetFeedsResponse> call, Response<GetFeedsResponse> response) {
                 if (response.body() != null) {
                     List<feed> feedList = response.body().getFeeds();
-                    for (feed f : feedList) {
-                        System.out.println(f.getName());
+                    if (feedList.size() != 0) {
+                        DefaultListModel model = new DefaultListModel();
+                        model.addElement("Tous");
+                        for (feed f : feedList) {
+                             model.addElement(f.getName());
+                             System.out.println(f.getUtl());
+                         }
+                        feedView.initFeedListView(model);
                     }
                 } else {
                     System.out.println(response.code());

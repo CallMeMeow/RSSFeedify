@@ -7,11 +7,18 @@ package View;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 /**
  *
@@ -20,7 +27,7 @@ import javax.swing.JScrollPane;
 public class FeedView extends javax.swing.JPanel {
 
     
-      JList list;
+    JList list;
 
     DefaultListModel model;
     /**
@@ -31,20 +38,55 @@ public class FeedView extends javax.swing.JPanel {
         this.setBackground(new Color(27, 193, 132));
         this.FeedPanel.setBackground(new Color(27, 193, 132));
         this.MenuPanel.setBackground(Color.yellow);
-        
+    }
+    
+    public void initFeedListView(DefaultListModel model) {
         this.MenuPanel.setLayout(new BorderLayout());
-         model = new DefaultListModel();
-         list = new JList(model);
+        list = new JList(model);
          JScrollPane pane = new JScrollPane(list);
-         //JButton addButton = new JButton("Add Element");
-        // JButton removeButton = new JButton("Remove Element");
-         for (int i = 0; i < 15; i++)
-           model.addElement("Element " + i);
+         JButton addButton = new JButton("Add Element");
+         JButton removeButton = new JButton("Remove Element");
+         
+         
          this.MenuPanel.add(pane, BorderLayout.CENTER);
+         this.MenuPanel.add(addButton, BorderLayout.PAGE_END);
+         
+         //AddButton add listener
+         addButton.addActionListener(new ActionListener() {
+             public void actionPerformed(ActionEvent e) {
+                 DisplayAddFeedPopup();
+             }
+         });
+         
+         
+        // this.MenuPanel.add(removeButton, BorderLayout.WEST);
          this.MenuPanel.revalidate();
          this.MenuPanel.repaint();
     }
 
+    
+    void DisplayAddFeedPopup() {
+        JTextField field1 = new JTextField("");
+        JTextField field2 = new JTextField("");
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("Feed Name :"));
+        panel.add(field1);
+        panel.add(new JLabel("URL :"));
+        panel.add(field2);
+        int result = JOptionPane.showConfirmDialog(null, panel, "Entrez les infos du feed",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            System.out.println(field1.getText()
+                    + " " + field2.getText());
+            if (field1.getText().isEmpty() || field2.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Un des champs est vide !", "Add feed", JOptionPane.ERROR_MESSAGE);
+            }
+            MenuPanel.revalidate();
+            MenuPanel.repaint();
+        } else {
+            System.out.println("Cancelled");
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -65,7 +107,7 @@ public class FeedView extends javax.swing.JPanel {
         MenuPanel.setLayout(MenuPanelLayout);
         MenuPanelLayout.setHorizontalGroup(
             MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 41, Short.MAX_VALUE)
+            .addGap(0, 50, Short.MAX_VALUE)
         );
         MenuPanelLayout.setVerticalGroup(
             MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -80,7 +122,7 @@ public class FeedView extends javax.swing.JPanel {
         FeedPanel.setLayout(FeedPanelLayout);
         FeedPanelLayout.setHorizontalGroup(
             FeedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 838, Short.MAX_VALUE)
+            .addGap(0, 1000, Short.MAX_VALUE)
         );
         FeedPanelLayout.setVerticalGroup(
             FeedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -95,4 +137,5 @@ public class FeedView extends javax.swing.JPanel {
     private javax.swing.JPanel FeedPanel;
     private javax.swing.JPanel MenuPanel;
     // End of variables declaration//GEN-END:variables
+
 }

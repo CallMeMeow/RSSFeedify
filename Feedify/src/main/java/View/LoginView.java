@@ -47,7 +47,7 @@ public class LoginView extends javax.swing.JPanel {
 
         TitleLabel = new javax.swing.JLabel();
         LoginTextField = new javax.swing.JTextField();
-        PasswordField = new javax.swing.JTextField();
+        PasswordField = new javax.swing.JPasswordField();
         ConnectButton = new javax.swing.JButton();
         RegisterButton = new javax.swing.JButton();
 
@@ -63,7 +63,7 @@ public class LoginView extends javax.swing.JPanel {
         add(TitleLabel, gridBagConstraints);
 
         LoginTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        LoginTextField.setText("Login");
+        LoginTextField.setText("do_f");
         LoginTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 LoginTextFieldActionPerformed(evt);
@@ -78,20 +78,12 @@ public class LoginView extends javax.swing.JPanel {
         add(LoginTextField, gridBagConstraints);
 
         PasswordField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        PasswordField.setText("Login");
-        PasswordField.setPreferredSize(new java.awt.Dimension(38, 27));
-        PasswordField.setSelectionEnd(5);
-        PasswordField.setSelectionStart(5);
-        PasswordField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                PasswordFieldActionPerformed(evt);
-            }
-        });
+        PasswordField.setText("ganjify");
+        PasswordField.setOpaque(false);
+        PasswordField.setPreferredSize(new java.awt.Dimension(255, 30));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.ipadx = 223;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(20, 305, 30, 296);
         add(PasswordField, gridBagConstraints);
 
@@ -120,10 +112,6 @@ public class LoginView extends javax.swing.JPanel {
         add(RegisterButton, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void PasswordFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PasswordFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_PasswordFieldActionPerformed
-
     private void LoginTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_LoginTextFieldActionPerformed
@@ -146,7 +134,7 @@ public class LoginView extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ConnectButton;
     private javax.swing.JTextField LoginTextField;
-    private javax.swing.JTextField PasswordField;
+    private javax.swing.JPasswordField PasswordField;
     private javax.swing.JButton RegisterButton;
     private javax.swing.JLabel TitleLabel;
     // End of variables declaration//GEN-END:variables

@@ -12,7 +12,7 @@ package Model;
 public class feed {
     private int id;
     private String name;
-    private String utl;
+    private String url;
     private Boolean refresh_error;
 
     public void setId(int id) {
@@ -23,8 +23,8 @@ public class feed {
         this.name = name;
     }
 
-    public void setUtl(String utl) {
-        this.utl = utl;
+    public void setUtl(String url) {
+        this.url = url;
     }
 
     public void setRefresh_error(Boolean refresh_error) {
@@ -40,7 +40,7 @@ public class feed {
     }
 
     public String getUtl() {
-        return utl;
+        return url;
     }
 
     public Boolean getRefresh_error() {
