@@ -5,6 +5,8 @@
  */
 package Model;
 
+import java.util.List;
+
 /**
  *
  * @author Bastien
@@ -12,9 +14,18 @@ package Model;
 public class UserModel {
     public static UserModel Instance;
     String token;
-    
+    List<Feed> userFeeds;
+
     public UserModel() {
         Instance = this;
+    }
+    
+    public List<Feed> getUserFeeds() {
+        return userFeeds;
+    }
+
+    public void setUserFeeds(List<Feed> userFeeds) {
+        this.userFeeds = userFeeds;
     }
     
     public void setToken(String token) {
