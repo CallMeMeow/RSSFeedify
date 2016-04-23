@@ -25,11 +25,10 @@ import javax.swing.JTextField;
  * @author Bastien
  */
 public class FeedView extends javax.swing.JPanel {
-
-    
     JList list;
-
     DefaultListModel model;
+    private OnFeedViewEventRaised FeedEvent;
+    
     /**
      * Creates new form FeedView
      */
@@ -38,30 +37,30 @@ public class FeedView extends javax.swing.JPanel {
         this.setBackground(new Color(27, 193, 132));
         this.FeedPanel.setBackground(new Color(27, 193, 132));
         this.MenuPanel.setBackground(Color.yellow);
+        initFeedListVieww();
     }
     
-    public void initFeedListView(DefaultListModel model) {
+    public void initFeedListVieww() {
         this.MenuPanel.setLayout(new BorderLayout());
+        model = new DefaultListModel();
         list = new JList(model);
-         JScrollPane pane = new JScrollPane(list);
-         JButton addButton = new JButton("Add Element");
-         JButton removeButton = new JButton("Remove Element");
-         
-         
-         this.MenuPanel.add(pane, BorderLayout.CENTER);
-         this.MenuPanel.add(addButton, BorderLayout.PAGE_END);
-         
-         //AddButton add listener
-         addButton.addActionListener(new ActionListener() {
+        JScrollPane pane = new JScrollPane(list);
+        JButton addButton = new JButton("Add Element");
+        this.MenuPanel.add(pane, BorderLayout.CENTER);
+        this.MenuPanel.add(addButton, BorderLayout.PAGE_END);
+        addButton.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent e) {
                  DisplayAddFeedPopup();
              }
          });
-         
-         
-        // this.MenuPanel.add(removeButton, BorderLayout.WEST);
-         this.MenuPanel.revalidate();
-         this.MenuPanel.repaint();
+        this.MenuPanel.revalidate();
+        this.MenuPanel.repaint();
+    }
+    
+    public void reloadFeedListWithNewModel(DefaultListModel modell) {
+        for (int i = 0; i < modell.size(); i++) {
+            model.add(i, modell.elementAt(i));
+        }
     }
 
     
@@ -76,16 +75,27 @@ public class FeedView extends javax.swing.JPanel {
         int result = JOptionPane.showConfirmDialog(null, panel, "Entrez les infos du feed",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
-            System.out.println(field1.getText()
-                    + " " + field2.getText());
             if (field1.getText().isEmpty() || field2.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Un des champs est vide !", "Add feed", JOptionPane.ERROR_MESSAGE);
+            } else {
+                if (FeedEvent != null) {
+                    FeedEvent.OnAddFeedComplete(field1.getText(), field2.getText());    
+                }
             }
             MenuPanel.revalidate();
             MenuPanel.repaint();
         } else {
             System.out.println("Cancelled");
         }
+    }
+    
+    //Raise Events
+    public interface OnFeedViewEventRaised {
+        void OnAddFeedComplete(String name, String URL);
+    }
+    
+    public void setOnFeedViewEventRaised(OnFeedViewEventRaised connectEvent) {
+        this.FeedEvent = connectEvent;
     }
     /**
      * This method is called from within the constructor to initialize the form.

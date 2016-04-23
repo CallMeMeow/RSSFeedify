@@ -5,6 +5,8 @@
  */
 package API;
 
+import Model.Feed;
+import Model.Feed.FeedPost;
 import Model.GetFeedsResponse;
 import Model.LoginResponse;
 import Model.LoginResponse.LoginPost;
@@ -28,4 +30,7 @@ public interface ApiService {
     
     @GET("feeds")
     Call<GetFeedsResponse>  feeds();
+    
+    @POST("feed")
+    Call<Feed>  addFeed(@Body FeedPost post);
 }

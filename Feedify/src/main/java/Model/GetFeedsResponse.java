@@ -14,7 +14,7 @@ import java.util.List;
  */
 
 public class GetFeedsResponse {
-    private List<feed> feeds;
+    private List<Feed> feeds;
     private int new_articles;
 
     public void setNew_articles(int new_articles) {
@@ -25,11 +25,11 @@ public class GetFeedsResponse {
         return new_articles;
     }
 
-    public void setFeeds(List<feed> feeds) {
+    public void setFeeds(List<Feed> feeds) {
         this.feeds = feeds;
     }
 
-    public List<feed> getFeeds() {
+    public List<Feed> getFeeds() {
         return feeds;
     }
 }
