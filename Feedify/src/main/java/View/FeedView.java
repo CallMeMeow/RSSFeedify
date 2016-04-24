@@ -5,6 +5,9 @@
  */
 package View;
 
+import Model.AllArticlesModel;
+import Model.GetArticleResponse.Articles;
+import Model.UserModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -19,14 +22,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 
 /**
  *
  * @author Bastien
  */
 public class FeedView extends javax.swing.JPanel {
-    JList list;
+    JList feedList;
+    JList feedListContent;
     DefaultListModel model;
+    DefaultListModel ContentModel;
     private OnFeedViewEventRaised FeedEvent;
     
     /**
@@ -36,15 +42,17 @@ public class FeedView extends javax.swing.JPanel {
         initComponents();
         this.setBackground(new Color(27, 193, 132));
         this.FeedPanel.setBackground(new Color(27, 193, 132));
-        this.MenuPanel.setBackground(Color.yellow);
-        initFeedListVieww();
+        this.MenuPanel.setBackground(new Color(27, 193, 132));
+        initFeedListView();
+        initContentFeedView();
     }
     
-    public void initFeedListVieww() {
+    public void initFeedListView() {
         this.MenuPanel.setLayout(new BorderLayout());
         model = new DefaultListModel();
-        list = new JList(model);
-        JScrollPane pane = new JScrollPane(list);
+        model.addElement("Tous");
+        feedList = new JList(model);
+        JScrollPane pane = new JScrollPane(feedList);
         JButton addButton = new JButton("Add Element");
         this.MenuPanel.add(pane, BorderLayout.CENTER);
         this.MenuPanel.add(addButton, BorderLayout.PAGE_END);
@@ -57,12 +65,36 @@ public class FeedView extends javax.swing.JPanel {
         this.MenuPanel.repaint();
     }
     
-    public void reloadFeedListWithNewModel(DefaultListModel modell) {
-        for (int i = 0; i < modell.size(); i++) {
-            model.add(i, modell.elementAt(i));
+    public void reloadFeed() {
+        for (int i = 0; i < UserModel.Instance.getUserFeeds().size(); i++) {
+            //+ 1 to leave the "Tous" on top of the list
+            model.add(i + 1, UserModel.Instance.getUserFeeds().get(i).getName());
         }
     }
+    
+    public void initContentFeedView() {
+        this.FeedPanel.setLayout(new BorderLayout());
+        ContentModel = new DefaultListModel();
+        feedListContent = new JList(ContentModel);
+     //   feedListContent.setBackground(new Color(27, 193, 132));
+        JScrollPane pane = new JScrollPane(feedListContent);
+        this.FeedPanel.add(pane, BorderLayout.CENTER);
+        this.FeedPanel.revalidate();
+        this.FeedPanel.repaint();
+    }
 
+    public void RefreshAndDumpArticles() {
+        for (int i = 0; i < AllArticlesModel.Instance.getAllArticles().size(); i++) {
+            Articles article = AllArticlesModel.Instance.getAllArticles().get(i);
+            ContentModel.addElement(article.getTitle());
+        }
+        this.FeedPanel.revalidate();
+        this.FeedPanel.repaint();
+    }
+    
+    public void addThisFeedToList(String elem) {
+        model.addElement(elem);
+    }
     
     void DisplayAddFeedPopup() {
         JTextField field1 = new JTextField("");

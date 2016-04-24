@@ -6,10 +6,13 @@
 package Controller;
 
 import API.RestClient;
+import Model.AllArticlesModel;
 import Model.GetFeedsResponse;
 import Model.UserModel;
 import Model.Feed;
 import Model.Feed.FeedPost;
+import Model.GetArticleResponse;
+import Model.GetArticleResponse.Articles;
 import View.FeedView;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -26,6 +29,7 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
     FeedView feedView;
     
     public FeedController(JFrame win) {
+        new AllArticlesModel();
         feedView = new FeedView();
         feedView.setOnFeedViewEventRaised(this);
         win.setContentPane(feedView);
@@ -43,16 +47,13 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
                 if (response.body() != null) {
                     List<Feed> feedList = response.body().getFeeds();
                     if (feedList.size() != 0) {
-                        DefaultListModel model = new DefaultListModel();
-                        model.addElement("Tous");
                         for (Feed f : feedList) {
                             if (!UserModel.Instance.getUserFeeds().contains(f)) {
                                 UserModel.Instance.getUserFeeds().add(f);
                             }
-                            model.addElement(f.getName());
-                            System.out.println(f.getUrl());
                          }
-                        feedView.reloadFeedListWithNewModel(model);
+                        feedView.reloadFeed();
+                        getAllFeed(0);
                     }
                 } else {
                     System.out.println("GetFeed " + response.code());
@@ -66,6 +67,26 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
         });
     }
 
+    private void getAllFeed(int page) {
+        Call<GetArticleResponse> call = RestClient.get(UserModel.Instance.getToken()).getAllFeed(page);
+        
+        call.enqueue(new Callback<GetArticleResponse>() {
+            @Override
+            public void onResponse(Call<GetArticleResponse> call, Response<GetArticleResponse> response) {
+                if (response.body() != null) {
+                    AllArticlesModel.Instance.setAllArticles(response.body().getArticles());
+                    feedView.RefreshAndDumpArticles();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetArticleResponse> call, Throwable t) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        } );
+
+    }
+    
     @Override
     public void OnAddFeedComplete(String name, String URL) {
         FeedPost p = new FeedPost(name, URL);
@@ -75,11 +96,13 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
             @Override
             public void onResponse(Call<Feed> call, Response<Feed> response) {
                 if (response.body() != null) {
+                    System.out.println(response.code());
                     if (!UserModel.Instance.getUserFeeds().contains(response.body())) {
                         UserModel.Instance.getUserFeeds().add(response.body());
+                        feedView.addThisFeedToList(response.body().getName());
                     }
                 } else {
-                    System.out.println(response.code() + "CODE");
+                    System.out.println(response.code() + " CODE");
                 }
             }
 

@@ -5,6 +5,7 @@
  */
 package Model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ public class UserModel {
 
     public UserModel() {
         Instance = this;
+        userFeeds = new ArrayList<>();
     }
     
     public List<Feed> getUserFeeds() {

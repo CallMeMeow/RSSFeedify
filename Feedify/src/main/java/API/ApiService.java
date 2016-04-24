@@ -7,6 +7,7 @@ package API;
 
 import Model.Feed;
 import Model.Feed.FeedPost;
+import Model.GetArticleResponse;
 import Model.GetFeedsResponse;
 import Model.LoginResponse;
 import Model.LoginResponse.LoginPost;
@@ -16,6 +17,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 /**
  *
@@ -33,4 +35,11 @@ public interface ApiService {
     
     @POST("feed")
     Call<Feed>  addFeed(@Body FeedPost post);
+    
+    @GET("feeds/articles/{id}")
+    Call<GetArticleResponse>      getAllFeed(@Path("id") int page);
+
+    @GET("feed/{feedid}/articles/{page}")
+    Call<GetArticleResponse>      getAllFeedById(@Path("feedid") int id, @Path("page") int page);
+
 }
