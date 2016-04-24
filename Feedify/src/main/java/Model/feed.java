@@ -16,6 +16,7 @@ public class Feed {
     private Boolean refresh_error;
     private int new_articles;
 
+
     public void setNew_articles(int new_articles) {
         this.new_articles = new_articles;
     }

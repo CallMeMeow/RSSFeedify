@@ -7,6 +7,7 @@ package Model;
 
 import Model.GetArticleResponse.Articles;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -15,6 +16,15 @@ import java.util.List;
 public class AllArticlesModel {
     public static AllArticlesModel Instance;
     public List<Articles> allArticles;
+    public Boolean isTheFeedDead;
+
+    public void setIsTheFeedDead(Boolean isTheFeedDead) {
+        this.isTheFeedDead = isTheFeedDead;
+    }
+
+    public Boolean getIsTheFeedDead() {
+        return isTheFeedDead;
+    }
 
     public void setAllArticles(List<Articles> allArticles) {
         this.allArticles = allArticles;
@@ -26,5 +36,6 @@ public class AllArticlesModel {
     
     public AllArticlesModel() {
         Instance = this;
+        isTheFeedDead = false;
     }
 }

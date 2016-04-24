@@ -13,7 +13,6 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -22,7 +21,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  *
@@ -33,6 +33,9 @@ public class FeedView extends javax.swing.JPanel {
     JList feedListContent;
     DefaultListModel model;
     DefaultListModel ContentModel;
+    FeedListRenderer customCell = new FeedListRenderer();
+    int currentPage;
+    
     private OnFeedViewEventRaised FeedEvent;
     
     /**
@@ -41,8 +44,9 @@ public class FeedView extends javax.swing.JPanel {
     public FeedView() {
         initComponents();
         this.setBackground(new Color(27, 193, 132));
-        this.FeedPanel.setBackground(new Color(27, 193, 132));
-        this.MenuPanel.setBackground(new Color(27, 193, 132));
+        this.MenuPanel.setBackground(new Color(44, 62, 80));
+        this.currentPage = 1;
+        this.PageLabel.setText(String.valueOf(this.currentPage));
         initFeedListView();
         initContentFeedView();
     }
@@ -50,8 +54,26 @@ public class FeedView extends javax.swing.JPanel {
     public void initFeedListView() {
         this.MenuPanel.setLayout(new BorderLayout());
         model = new DefaultListModel();
-        model.addElement("Tous");
+        model.addElement("All articles");
         feedList = new JList(model);
+        feedList.setBackground(new Color(44, 62, 80));
+        feedList.setCellRenderer(customCell);
+        
+        feedList.setSelectedIndex(0);
+        feedList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                    setCurrentPage(1);
+                    if (feedList.getSelectedIndex() == 0) {
+                        FeedEvent.getAllFeed(-1, currentPage);
+                    } else {
+                        FeedEvent.getAllFeed(UserModel.Instance.getUserFeeds().get(feedList.getSelectedIndex() - 1).getId(), currentPage);
+                    }
+                    FeedName.setText(feedList.getSelectedValue().toString());
+                }
+            }
+        });
         JScrollPane pane = new JScrollPane(feedList);
         JButton addButton = new JButton("Add Element");
         this.MenuPanel.add(pane, BorderLayout.CENTER);
@@ -61,8 +83,6 @@ public class FeedView extends javax.swing.JPanel {
                  DisplayAddFeedPopup();
              }
          });
-        this.MenuPanel.revalidate();
-        this.MenuPanel.repaint();
     }
     
     public void reloadFeed() {
@@ -79,17 +99,14 @@ public class FeedView extends javax.swing.JPanel {
      //   feedListContent.setBackground(new Color(27, 193, 132));
         JScrollPane pane = new JScrollPane(feedListContent);
         this.FeedPanel.add(pane, BorderLayout.CENTER);
-        this.FeedPanel.revalidate();
-        this.FeedPanel.repaint();
     }
 
     public void RefreshAndDumpArticles() {
+        ContentModel.removeAllElements();
         for (int i = 0; i < AllArticlesModel.Instance.getAllArticles().size(); i++) {
             Articles article = AllArticlesModel.Instance.getAllArticles().get(i);
             ContentModel.addElement(article.getTitle());
         }
-        this.FeedPanel.revalidate();
-        this.FeedPanel.repaint();
     }
     
     public void addThisFeedToList(String elem) {
@@ -124,11 +141,23 @@ public class FeedView extends javax.swing.JPanel {
     //Raise Events
     public interface OnFeedViewEventRaised {
         void OnAddFeedComplete(String name, String URL);
+        void getAllFeed(int id, int page);
     }
     
     public void setOnFeedViewEventRaised(OnFeedViewEventRaised connectEvent) {
         this.FeedEvent = connectEvent;
     }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+        this.PageLabel.setText(String.valueOf(currentPage));
+        if (this.currentPage > 1) {
+            this.PreviousPageButton.setEnabled(true);
+        } else {
+            this.PreviousPageButton.setEnabled(false);
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -137,9 +166,18 @@ public class FeedView extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         MenuPanel = new javax.swing.JPanel();
+        FeedPanelHolder = new javax.swing.JPanel();
+        FeedPanelHeader = new javax.swing.JPanel();
+        Refresh = new javax.swing.JButton();
+        FeedName = new javax.swing.JLabel();
         FeedPanel = new javax.swing.JPanel();
+        FeedPanelFooter = new javax.swing.JPanel();
+        PreviousPageButton = new javax.swing.JButton();
+        PageLabel = new javax.swing.JLabel();
+        NextPageButton = new javax.swing.JButton();
 
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.X_AXIS));
 
@@ -158,26 +196,111 @@ public class FeedView extends javax.swing.JPanel {
 
         add(MenuPanel);
 
-        FeedPanel.setPreferredSize(new java.awt.Dimension(1000, 609));
+        FeedPanelHolder.setPreferredSize(new java.awt.Dimension(1000, 609));
+        FeedPanelHolder.setLayout(new java.awt.BorderLayout());
+
+        FeedPanelHeader.setBackground(new java.awt.Color(255, 255, 255));
+        FeedPanelHeader.setLayout(new java.awt.GridBagLayout());
+
+        Refresh.setBackground(new java.awt.Color(27, 193, 132));
+        Refresh.setText("Refresh");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = java.awt.GridBagConstraints.RELATIVE;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        FeedPanelHeader.add(Refresh, gridBagConstraints);
+
+        FeedName.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+        FeedName.setText("All articles");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        FeedPanelHeader.add(FeedName, gridBagConstraints);
+
+        FeedPanelHolder.add(FeedPanelHeader, java.awt.BorderLayout.PAGE_START);
+
+        FeedPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout FeedPanelLayout = new javax.swing.GroupLayout(FeedPanel);
         FeedPanel.setLayout(FeedPanelLayout);
         FeedPanelLayout.setHorizontalGroup(
             FeedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1000, Short.MAX_VALUE)
+            .addGap(0, 693, Short.MAX_VALUE)
         );
         FeedPanelLayout.setVerticalGroup(
             FeedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 609, Short.MAX_VALUE)
+            .addGap(0, 538, Short.MAX_VALUE)
         );
 
-        add(FeedPanel);
+        FeedPanelHolder.add(FeedPanel, java.awt.BorderLayout.CENTER);
+
+        FeedPanelFooter.setBackground(new java.awt.Color(255, 255, 255));
+        FeedPanelFooter.setLayout(new java.awt.GridBagLayout());
+
+        PreviousPageButton.setBackground(new java.awt.Color(27, 193, 132));
+        PreviousPageButton.setForeground(new java.awt.Color(255, 255, 255));
+        PreviousPageButton.setText("Previous Page");
+        PreviousPageButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PreviousPageButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 20);
+        FeedPanelFooter.add(PreviousPageButton, gridBagConstraints);
+
+        PageLabel.setText("1");
+        FeedPanelFooter.add(PageLabel, new java.awt.GridBagConstraints());
+
+        NextPageButton.setBackground(new java.awt.Color(27, 193, 132));
+        NextPageButton.setForeground(new java.awt.Color(255, 255, 255));
+        NextPageButton.setText("Next Page");
+        NextPageButton.setMaximumSize(new java.awt.Dimension(101, 23));
+        NextPageButton.setMinimumSize(new java.awt.Dimension(101, 23));
+        NextPageButton.setPreferredSize(new java.awt.Dimension(101, 27));
+        NextPageButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NextPageButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 0);
+        FeedPanelFooter.add(NextPageButton, gridBagConstraints);
+
+        FeedPanelHolder.add(FeedPanelFooter, java.awt.BorderLayout.PAGE_END);
+
+        add(FeedPanelHolder);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void NextPageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NextPageButtonActionPerformed
+        if (feedList.getSelectedIndex() == 0) {
+            FeedEvent.getAllFeed(-1, currentPage + 1);
+        } else {
+            FeedEvent.getAllFeed(UserModel.Instance.getUserFeeds().get(feedList.getSelectedIndex() - 1).getId(), currentPage + 1);
+        }
+    }//GEN-LAST:event_NextPageButtonActionPerformed
+
+    private void PreviousPageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PreviousPageButtonActionPerformed
+        if (feedList.getSelectedIndex() == 0) {
+            FeedEvent.getAllFeed(-1, currentPage - 1);
+        } else {
+            FeedEvent.getAllFeed(UserModel.Instance.getUserFeeds().get(feedList.getSelectedIndex() - 1).getId(), currentPage - 1);
+        }
+    }//GEN-LAST:event_PreviousPageButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel FeedName;
     private javax.swing.JPanel FeedPanel;
+    private javax.swing.JPanel FeedPanelFooter;
+    private javax.swing.JPanel FeedPanelHeader;
+    private javax.swing.JPanel FeedPanelHolder;
     private javax.swing.JPanel MenuPanel;
+    private javax.swing.JButton NextPageButton;
+    private javax.swing.JLabel PageLabel;
+    private javax.swing.JButton PreviousPageButton;
+    private javax.swing.JButton Refresh;
     // End of variables declaration//GEN-END:variables
 
 }

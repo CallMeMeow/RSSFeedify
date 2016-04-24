@@ -53,7 +53,7 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
                             }
                          }
                         feedView.reloadFeed();
-                        getAllFeed(0);
+                        getAllFeed(-1, 1);
                     }
                 } else {
                     System.out.println("GetFeed " + response.code());
@@ -66,15 +66,24 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
             }
         });
     }
-
-    private void getAllFeed(int page) {
-        Call<GetArticleResponse> call = RestClient.get(UserModel.Instance.getToken()).getAllFeed(page);
+    
+    @Override
+    public void getAllFeed(int id, int page) {
+        Call<GetArticleResponse> call;
+        if (id == -1) {
+            call = RestClient.get(UserModel.Instance.getToken()).getAllFeed(page);
+        } else {
+            call = RestClient.get(UserModel.Instance.getToken()).getAllFeedById(id, page);
+        }
         
         call.enqueue(new Callback<GetArticleResponse>() {
             @Override
             public void onResponse(Call<GetArticleResponse> call, Response<GetArticleResponse> response) {
                 if (response.body() != null) {
-                    AllArticlesModel.Instance.setAllArticles(response.body().getArticles());
+                    if (!response.body().getArticles().isEmpty()) {
+                        AllArticlesModel.Instance.setAllArticles(response.body().getArticles());
+                        feedView.setCurrentPage(page);
+                    }
                     feedView.RefreshAndDumpArticles();
                 }
             }
