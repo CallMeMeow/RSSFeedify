@@ -10,9 +10,16 @@ import Model.GetArticleResponse.Articles;
 import Model.UserModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -23,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.xml.stream.XMLStreamException;
 
 /**
  *
@@ -34,6 +42,8 @@ public class FeedView extends javax.swing.JPanel {
     DefaultListModel model;
     DefaultListModel ContentModel;
     FeedListRenderer customCell = new FeedListRenderer();
+    ArticleDetailView DetailPanel;
+    JScrollPane spane;
     int currentPage;
     
     private OnFeedViewEventRaised FeedEvent;
@@ -93,20 +103,47 @@ public class FeedView extends javax.swing.JPanel {
     }
     
     public void initContentFeedView() {
-        this.FeedPanel.setLayout(new BorderLayout());
+        FeedPanel.setLayout(new BorderLayout());
         ContentModel = new DefaultListModel();
         feedListContent = new JList(ContentModel);
-     //   feedListContent.setBackground(new Color(27, 193, 132));
-        JScrollPane pane = new JScrollPane(feedListContent);
-        this.FeedPanel.add(pane, BorderLayout.CENTER);
+        DefaultListCellRenderer renderer = (DefaultListCellRenderer)feedListContent.getCellRenderer();
+        renderer.setHorizontalAlignment(JLabel.CENTER);
+        spane = new JScrollPane(feedListContent);
+        FeedPanel.add(spane, BorderLayout.CENTER);
+        feedListContent.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                JList list = (JList) evt.getSource();
+                if (evt.getClickCount() >= 2) {
+                    int index = list.locationToIndex(evt.getPoint());
+                    System.out.println(AllArticlesModel.Instance.getAllArticles().get(index).getTitle());
+                    
+                    DetailPanel = new ArticleDetailView();
+                    DetailPanel.setDesignWithData(AllArticlesModel.Instance.getAllArticles().get(index));
+                    FeedPanel.add(DetailPanel, BorderLayout.CENTER);
+                    feedListContent.setVisible(false);
+                    spane.setVisible(false);
+                    FeedPanel.revalidate();
+                }
+            }
+        });
     }
 
     public void RefreshAndDumpArticles() {
         ContentModel.removeAllElements();
+        if (!feedListContent.isVisible()) {
+            CloseDetailView();
+        }
         for (int i = 0; i < AllArticlesModel.Instance.getAllArticles().size(); i++) {
             Articles article = AllArticlesModel.Instance.getAllArticles().get(i);
             ContentModel.addElement(article.getTitle());
         }
+    }
+    
+    void CloseDetailView() {
+        FeedPanel.remove(DetailPanel);
+        DetailPanel = null;
+        feedListContent.setVisible(true);
+        spane.setVisible(true);
     }
     
     public void addThisFeedToList(String elem) {
@@ -174,6 +211,7 @@ public class FeedView extends javax.swing.JPanel {
         Refresh = new javax.swing.JButton();
         FeedName = new javax.swing.JLabel();
         FeedPanel = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
         FeedPanelFooter = new javax.swing.JPanel();
         PreviousPageButton = new javax.swing.JButton();
         PageLabel = new javax.swing.JLabel();
@@ -221,17 +259,22 @@ public class FeedView extends javax.swing.JPanel {
         FeedPanelHolder.add(FeedPanelHeader, java.awt.BorderLayout.PAGE_START);
 
         FeedPanel.setBackground(new java.awt.Color(255, 255, 255));
+        FeedPanel.setLayout(new java.awt.BorderLayout());
 
-        javax.swing.GroupLayout FeedPanelLayout = new javax.swing.GroupLayout(FeedPanel);
-        FeedPanel.setLayout(FeedPanelLayout);
-        FeedPanelLayout.setHorizontalGroup(
-            FeedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 693, Short.MAX_VALUE)
+        jPanel1.setBackground(new java.awt.Color(204, 0, 204));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1000, Short.MAX_VALUE)
         );
-        FeedPanelLayout.setVerticalGroup(
-            FeedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 538, Short.MAX_VALUE)
         );
+
+        FeedPanel.add(jPanel1, java.awt.BorderLayout.CENTER);
 
         FeedPanelHolder.add(FeedPanel, java.awt.BorderLayout.CENTER);
 
@@ -301,6 +344,7 @@ public class FeedView extends javax.swing.JPanel {
     private javax.swing.JLabel PageLabel;
     private javax.swing.JButton PreviousPageButton;
     private javax.swing.JButton Refresh;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 
 }
