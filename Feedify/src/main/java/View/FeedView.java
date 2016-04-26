@@ -10,15 +10,11 @@ import Model.GetArticleResponse.Articles;
 import Model.UserModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.FileNotFoundException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -30,7 +26,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.xml.stream.XMLStreamException;
 
 /**
  *
@@ -54,7 +49,10 @@ public class FeedView extends javax.swing.JPanel {
     public FeedView() {
         initComponents();
         this.setBackground(new Color(27, 193, 132));
-        this.MenuPanel.setBackground(new Color(44, 62, 80));
+        this.MenuPanelHolder.setBackground(new Color(44, 62, 80));
+        this.FeedListPanel.setBackground(new Color(44, 62, 80));
+        this.UserInfosPanel.setBackground(new Color(44, 62, 80));
+        this.LoginSettings.setText(UserModel.Instance.getLogin());
         this.currentPage = 1;
         this.PageLabel.setText(String.valueOf(this.currentPage));
         initFeedListView();
@@ -62,7 +60,7 @@ public class FeedView extends javax.swing.JPanel {
     }
     
     public void initFeedListView() {
-        this.MenuPanel.setLayout(new BorderLayout());
+        this.FeedListPanel.setLayout(new BorderLayout());
         model = new DefaultListModel();
         model.addElement("All articles");
         feedList = new JList(model);
@@ -86,8 +84,8 @@ public class FeedView extends javax.swing.JPanel {
         });
         JScrollPane pane = new JScrollPane(feedList);
         JButton addButton = new JButton("Add Element");
-        this.MenuPanel.add(pane, BorderLayout.CENTER);
-        this.MenuPanel.add(addButton, BorderLayout.PAGE_END);
+        this.FeedListPanel.add(pane, BorderLayout.CENTER);
+        this.FeedListPanel.add(addButton, BorderLayout.PAGE_END);
         addButton.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent e) {
                  DisplayAddFeedPopup();
@@ -120,6 +118,7 @@ public class FeedView extends javax.swing.JPanel {
                     DetailPanel = new ArticleDetailView();
                     DetailPanel.setDesignWithData(AllArticlesModel.Instance.getAllArticles().get(index));
                     FeedPanel.add(DetailPanel, BorderLayout.CENTER);
+                    BackButton.setEnabled(true);
                     feedListContent.setVisible(false);
                     spane.setVisible(false);
                     FeedPanel.revalidate();
@@ -144,6 +143,7 @@ public class FeedView extends javax.swing.JPanel {
         DetailPanel = null;
         feedListContent.setVisible(true);
         spane.setVisible(true);
+        BackButton.setEnabled(false);
     }
     
     public void addThisFeedToList(String elem) {
@@ -168,8 +168,8 @@ public class FeedView extends javax.swing.JPanel {
                     FeedEvent.OnAddFeedComplete(field1.getText(), field2.getText());    
                 }
             }
-            MenuPanel.revalidate();
-            MenuPanel.repaint();
+            FeedListPanel.revalidate();
+            FeedListPanel.repaint();
         } else {
             System.out.println("Cancelled");
         }
@@ -205,34 +205,71 @@ public class FeedView extends javax.swing.JPanel {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        MenuPanel = new javax.swing.JPanel();
+        MenuPanelHolder = new javax.swing.JPanel();
+        UserInfosPanel = new javax.swing.JPanel();
+        FEEDIFY = new javax.swing.JLabel();
+        LoginSettings = new javax.swing.JButton();
+        Logout = new javax.swing.JButton();
+        FeedListPanel = new javax.swing.JPanel();
         FeedPanelHolder = new javax.swing.JPanel();
         FeedPanelHeader = new javax.swing.JPanel();
         Refresh = new javax.swing.JButton();
         FeedName = new javax.swing.JLabel();
+        BackButton = new javax.swing.JButton();
         FeedPanel = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
         FeedPanelFooter = new javax.swing.JPanel();
         PreviousPageButton = new javax.swing.JButton();
         PageLabel = new javax.swing.JLabel();
         NextPageButton = new javax.swing.JButton();
 
-        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.X_AXIS));
+        setLayout(new java.awt.BorderLayout());
 
-        MenuPanel.setPreferredSize(new java.awt.Dimension(50, 580));
+        MenuPanelHolder.setPreferredSize(new java.awt.Dimension(180, 580));
+        MenuPanelHolder.setLayout(new java.awt.BorderLayout());
 
-        javax.swing.GroupLayout MenuPanelLayout = new javax.swing.GroupLayout(MenuPanel);
-        MenuPanel.setLayout(MenuPanelLayout);
-        MenuPanelLayout.setHorizontalGroup(
-            MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 50, Short.MAX_VALUE)
+        UserInfosPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        UserInfosPanel.setPreferredSize(new java.awt.Dimension(180, 100));
+        UserInfosPanel.setLayout(new java.awt.GridBagLayout());
+
+        FEEDIFY.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        FEEDIFY.setForeground(new java.awt.Color(255, 255, 255));
+        FEEDIFY.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        FEEDIFY.setText("FEEDIFY");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.insets = new java.awt.Insets(15, 0, 15, 0);
+        UserInfosPanel.add(FEEDIFY, gridBagConstraints);
+
+        LoginSettings.setText("Login");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        UserInfosPanel.add(LoginSettings, gridBagConstraints);
+
+        Logout.setText("Logout");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        UserInfosPanel.add(Logout, gridBagConstraints);
+
+        MenuPanelHolder.add(UserInfosPanel, java.awt.BorderLayout.PAGE_START);
+
+        javax.swing.GroupLayout FeedListPanelLayout = new javax.swing.GroupLayout(FeedListPanel);
+        FeedListPanel.setLayout(FeedListPanelLayout);
+        FeedListPanelLayout.setHorizontalGroup(
+            FeedListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 180, Short.MAX_VALUE)
         );
-        MenuPanelLayout.setVerticalGroup(
-            MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 609, Short.MAX_VALUE)
+        FeedListPanelLayout.setVerticalGroup(
+            FeedListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        add(MenuPanel);
+        MenuPanelHolder.add(FeedListPanel, java.awt.BorderLayout.CENTER);
+
+        add(MenuPanelHolder, java.awt.BorderLayout.WEST);
 
         FeedPanelHolder.setPreferredSize(new java.awt.Dimension(1000, 609));
         FeedPanelHolder.setLayout(new java.awt.BorderLayout());
@@ -241,40 +278,52 @@ public class FeedView extends javax.swing.JPanel {
         FeedPanelHeader.setLayout(new java.awt.GridBagLayout());
 
         Refresh.setBackground(new java.awt.Color(27, 193, 132));
+        Refresh.setForeground(new java.awt.Color(255, 255, 255));
         Refresh.setText("Refresh");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = java.awt.GridBagConstraints.RELATIVE;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
         FeedPanelHeader.add(Refresh, gridBagConstraints);
 
         FeedName.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         FeedName.setText("All articles");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         FeedPanelHeader.add(FeedName, gridBagConstraints);
+
+        BackButton.setBackground(new java.awt.Color(27, 193, 132));
+        BackButton.setForeground(new java.awt.Color(255, 255, 255));
+        BackButton.setText("Back");
+        BackButton.setEnabled(false);
+        BackButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BackButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
+        FeedPanelHeader.add(BackButton, gridBagConstraints);
 
         FeedPanelHolder.add(FeedPanelHeader, java.awt.BorderLayout.PAGE_START);
 
         FeedPanel.setBackground(new java.awt.Color(255, 255, 255));
-        FeedPanel.setLayout(new java.awt.BorderLayout());
 
-        jPanel1.setBackground(new java.awt.Color(204, 0, 204));
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout FeedPanelLayout = new javax.swing.GroupLayout(FeedPanel);
+        FeedPanel.setLayout(FeedPanelLayout);
+        FeedPanelLayout.setHorizontalGroup(
+            FeedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 1000, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        FeedPanelLayout.setVerticalGroup(
+            FeedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 538, Short.MAX_VALUE)
         );
-
-        FeedPanel.add(jPanel1, java.awt.BorderLayout.CENTER);
 
         FeedPanelHolder.add(FeedPanel, java.awt.BorderLayout.CENTER);
 
@@ -313,7 +362,7 @@ public class FeedView extends javax.swing.JPanel {
 
         FeedPanelHolder.add(FeedPanelFooter, java.awt.BorderLayout.PAGE_END);
 
-        add(FeedPanelHolder);
+        add(FeedPanelHolder, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void NextPageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NextPageButtonActionPerformed
@@ -332,19 +381,28 @@ public class FeedView extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_PreviousPageButtonActionPerformed
 
+    private void BackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackButtonActionPerformed
+        CloseDetailView();
+    }//GEN-LAST:event_BackButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BackButton;
+    private javax.swing.JLabel FEEDIFY;
+    private javax.swing.JPanel FeedListPanel;
     private javax.swing.JLabel FeedName;
     private javax.swing.JPanel FeedPanel;
     private javax.swing.JPanel FeedPanelFooter;
     private javax.swing.JPanel FeedPanelHeader;
     private javax.swing.JPanel FeedPanelHolder;
-    private javax.swing.JPanel MenuPanel;
+    private javax.swing.JButton LoginSettings;
+    private javax.swing.JButton Logout;
+    private javax.swing.JPanel MenuPanelHolder;
     private javax.swing.JButton NextPageButton;
     private javax.swing.JLabel PageLabel;
     private javax.swing.JButton PreviousPageButton;
     private javax.swing.JButton Refresh;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel UserInfosPanel;
     // End of variables declaration//GEN-END:variables
 
 }

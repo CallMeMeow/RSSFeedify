@@ -15,11 +15,20 @@ import java.util.List;
 public class UserModel {
     public static UserModel Instance;
     String token;
+    String login;
     List<Feed> userFeeds;
 
     public UserModel() {
         Instance = this;
         userFeeds = new ArrayList<>();
+    }
+    
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getLogin() {
+        return login;
     }
     
     public List<Feed> getUserFeeds() {

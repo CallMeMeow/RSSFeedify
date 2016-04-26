@@ -70,8 +70,8 @@ public class LoginController implements LoginView.OnConnectButtonClick {
                 if (response.body() != null) {
                     UserModel user = new UserModel();
                     user.Instance.setToken(response.body().getToken());
+                    user.Instance.setLogin(login);
                     FeedController FeedVC = new FeedController(window);
-                    System.out.println(response.body().getToken());
                 } else {
                     JOptionPane.showMessageDialog(null, "Mauvais nom de compte ou mot de passe", "Connection", JOptionPane.ERROR_MESSAGE);
                 }

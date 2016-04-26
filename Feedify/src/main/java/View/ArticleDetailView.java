@@ -23,10 +23,8 @@ public class ArticleDetailView extends javax.swing.JPanel {
     }
     
     public void setDesignWithData(Articles article) {
-        System.out.println(article.getFull());
         TextArticle.setContentType("text/html");
-        TextArticle.setText(article.getFull());
-        
+        TextArticle.setText(article.getFull()); 
     }
 
     /**
