@@ -11,6 +11,7 @@ import Model.GetArticleResponse;
 import Model.GetFeedsResponse;
 import Model.LoginResponse;
 import Model.LoginResponse.LoginPost;
+import Model.LogoutResponse;
 import Model.RegisterResponse;
 import Model.RegisterResponse.RegisterPost;
 import retrofit2.Call;
@@ -29,6 +30,9 @@ public interface ApiService {
     
     @POST("login")
     Call<LoginResponse>     login(@Body LoginPost post);
+    
+    @POST("logout")
+    Call<LogoutResponse>    logout();
     
     @GET("feeds")
     Call<GetFeedsResponse>  feeds();

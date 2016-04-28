@@ -15,6 +15,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -26,6 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.BadLocationException;
 
 /**
  *
@@ -116,7 +120,14 @@ public class FeedView extends javax.swing.JPanel {
                     System.out.println(AllArticlesModel.Instance.getAllArticles().get(index).getTitle());
                     
                     DetailPanel = new ArticleDetailView();
-                    DetailPanel.setDesignWithData(AllArticlesModel.Instance.getAllArticles().get(index));
+                    try {
+                        DetailPanel.setDesignWithData(AllArticlesModel.Instance.getAllArticles().get(index));
+                    } catch (BadLocationException ex) {
+                        Logger.getLogger(FeedView.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(FeedView.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    FeedPanel.remove(spane);
                     FeedPanel.add(DetailPanel, BorderLayout.CENTER);
                     BackButton.setEnabled(true);
                     feedListContent.setVisible(false);
@@ -141,9 +152,11 @@ public class FeedView extends javax.swing.JPanel {
     void CloseDetailView() {
         FeedPanel.remove(DetailPanel);
         DetailPanel = null;
+        FeedPanel.add(spane, BorderLayout.CENTER);
         feedListContent.setVisible(true);
         spane.setVisible(true);
         BackButton.setEnabled(false);
+        FeedPanel.revalidate();
     }
     
     public void addThisFeedToList(String elem) {
@@ -179,6 +192,7 @@ public class FeedView extends javax.swing.JPanel {
     public interface OnFeedViewEventRaised {
         void OnAddFeedComplete(String name, String URL);
         void getAllFeed(int id, int page);
+        void logout();
     }
     
     public void setOnFeedViewEventRaised(OnFeedViewEventRaised connectEvent) {
@@ -249,6 +263,11 @@ public class FeedView extends javax.swing.JPanel {
         UserInfosPanel.add(LoginSettings, gridBagConstraints);
 
         Logout.setText("Logout");
+        Logout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                LogoutActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -384,6 +403,10 @@ public class FeedView extends javax.swing.JPanel {
     private void BackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackButtonActionPerformed
         CloseDetailView();
     }//GEN-LAST:event_BackButtonActionPerformed
+
+    private void LogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutActionPerformed
+        FeedEvent.logout();
+    }//GEN-LAST:event_LogoutActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

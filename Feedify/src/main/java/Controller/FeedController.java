@@ -13,6 +13,7 @@ import Model.Feed;
 import Model.Feed.FeedPost;
 import Model.GetArticleResponse;
 import Model.GetArticleResponse.Articles;
+import Model.LogoutResponse;
 import View.FeedView;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -27,6 +28,7 @@ import retrofit2.Response;
  */
 public  class FeedController implements FeedView.OnFeedViewEventRaised {
     FeedView feedView;
+    JFrame window;
     
     public FeedController(JFrame win) {
         new AllArticlesModel();
@@ -35,6 +37,7 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
         win.setContentPane(feedView);
         win.getContentPane().repaint();
         win.getContentPane().revalidate();
+        window = win;
         getFeedForDisplay();
     }
     
@@ -118,6 +121,25 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
             @Override
             public void onFailure(Call<Feed> call, Throwable t) {
                 System.out.println("slt");
+            }
+        });
+    }
+
+    @Override
+    public void logout() {
+        Call<LogoutResponse> call = RestClient.get(UserModel.Instance.getToken()).logout();
+        call.enqueue(new Callback<LogoutResponse>() {
+            @Override
+            public void onResponse(Call<LogoutResponse> call, Response<LogoutResponse> response) {
+                if (response.body() != null) {
+                    feedView = null;
+                    new LoginController(window);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LogoutResponse> call, Throwable t) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
     }

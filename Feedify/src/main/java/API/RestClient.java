@@ -42,15 +42,13 @@ public class RestClient {
 
     public static ApiService get(String _token)
     {
-        if (token == null)
+        if (token == null || !token.equals(_token))
             setupRestClientToken(_token);
         return mTokenRestClient;
     }
 
     private static void setupRestClient()
     {
-  //      Log.d("RestClient", "setupRestClient");
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(WEBSERVICE_HOST)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -61,7 +59,6 @@ public class RestClient {
 
     private static void setupRestClientToken(final String _token)
     {
-    //    Log.d("RestClient", "setupRestClientToken");
         token = _token;
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
          httpClient.addInterceptor(new Interceptor() {

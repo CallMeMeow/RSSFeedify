@@ -31,6 +31,8 @@ public class LoginController implements LoginView.OnConnectButtonClick {
         LoginView logView = new LoginView();
         logView.setOnConnectButtonClick(this);
         win.setContentPane(logView);
+        win.getContentPane().revalidate();
+        win.getContentPane().repaint();
         window = win;
     }
     

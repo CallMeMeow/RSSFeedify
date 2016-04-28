@@ -7,6 +7,14 @@ package View;
 
 import Model.GetArticleResponse.Articles;
 import java.awt.Color;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 
 /**
  *
@@ -20,11 +28,28 @@ public class ArticleDetailView extends javax.swing.JPanel {
     public ArticleDetailView() {
         initComponents();
         this.setBackground(Color.yellow);
+        TextArticle.setEditable(false);
+        
+        TextArticle.addHyperlinkListener(new HyperlinkListener() {
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    if (Desktop.isDesktopSupported()) {
+                        try {
+                            Desktop.getDesktop().browse(e.getURL().toURI());
+                        } catch (IOException | URISyntaxException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        );
     }
     
-    public void setDesignWithData(Articles article) {
-        TextArticle.setContentType("text/html");
-        TextArticle.setText(article.getFull()); 
+    public void setDesignWithData(Articles article) throws BadLocationException, IOException {
+     TextArticle.setContentType("text/html");
+     TextArticle.setText(article.getTitle() + "\n\n" + article.getFull()); 
+        
     }
 
     /**
@@ -36,19 +61,19 @@ public class ArticleDetailView extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        TextArticle = new javax.swing.JTextPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        TextArticle = new javax.swing.JEditorPane();
 
         setLayout(new java.awt.BorderLayout());
 
-        jScrollPane1.setViewportView(TextArticle);
+        jScrollPane2.setViewportView(TextArticle);
 
-        add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        add(jScrollPane2, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextPane TextArticle;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JEditorPane TextArticle;
+    private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 }
