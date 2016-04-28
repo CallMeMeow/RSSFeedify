@@ -16,11 +16,21 @@ public class UserModel {
     public static UserModel Instance;
     String token;
     String login;
+    Boolean isAdmin;
     List<Feed> userFeeds;
 
     public UserModel() {
         Instance = this;
+        isAdmin = false;
         userFeeds = new ArrayList<>();
+    }
+    
+    public void setIsAdmin(Boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
+
+    public Boolean getIsAdmin() {
+        return isAdmin;
     }
     
     public void setLogin(String login) {

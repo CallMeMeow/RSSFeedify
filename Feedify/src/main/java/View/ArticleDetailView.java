@@ -6,15 +6,12 @@
 package View;
 
 import Model.GetArticleResponse.Articles;
-import java.awt.Color;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLEditorKit;
 
 /**
  *
@@ -27,9 +24,7 @@ public class ArticleDetailView extends javax.swing.JPanel {
      */
     public ArticleDetailView() {
         initComponents();
-        this.setBackground(Color.yellow);
         TextArticle.setEditable(false);
-        
         TextArticle.addHyperlinkListener(new HyperlinkListener() {
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -47,9 +42,9 @@ public class ArticleDetailView extends javax.swing.JPanel {
     }
     
     public void setDesignWithData(Articles article) throws BadLocationException, IOException {
-     TextArticle.setContentType("text/html");
-     TextArticle.setText(article.getTitle() + "\n\n" + article.getFull()); 
-        
+        TextArticle.setContentType("text/html");
+        TextArticle.setText("<center><font size=\"27\">" + article.getTitle() + "</font></center>"
+                              + article.getFull());  
     }
 
     /**

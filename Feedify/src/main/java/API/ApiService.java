@@ -5,19 +5,26 @@
  */
 package API;
 
+import Model.DeleteFeedResponse;
 import Model.Feed;
 import Model.Feed.FeedPost;
 import Model.GetArticleResponse;
 import Model.GetFeedsResponse;
+import Model.GetUserResponse;
 import Model.LoginResponse;
 import Model.LoginResponse.LoginPost;
 import Model.LogoutResponse;
 import Model.RegisterResponse;
 import Model.RegisterResponse.RegisterPost;
+import Model.User.UpdateUserResponse;
+import Model.User.UpdateUserResponse.User;
+import Model.User.UsersResponse;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 /**
@@ -40,10 +47,24 @@ public interface ApiService {
     @POST("feed")
     Call<Feed>  addFeed(@Body FeedPost post);
     
+    @DELETE("feed/{id}")
+    Call<DeleteFeedResponse>    deleteFeed(@Path("id") int id);
+    
     @GET("feeds/articles/{id}")
     Call<GetArticleResponse>      getAllFeed(@Path("id") int page);
 
     @GET("feed/{feedid}/articles/{page}")
     Call<GetArticleResponse>      getAllFeedById(@Path("feedid") int id, @Path("page") int page);
+    
+    //Users
+    
+    @GET("user/{username}")
+    Call<GetUserResponse>        getUser(@Path("username") String username);
+    
+    @PUT("user/{username}")
+    Call<UpdateUserResponse>    updateUser(@Path("username") String username, @Body User user);
+    
+    @GET("users")
+    Call<UsersResponse>          getAllUser();
 
 }

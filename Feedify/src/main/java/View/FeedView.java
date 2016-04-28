@@ -7,6 +7,7 @@ package View;
 
 import Model.AllArticlesModel;
 import Model.GetArticleResponse.Articles;
+import Model.User.UsersResponse;
 import Model.UserModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -16,17 +17,23 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
@@ -35,7 +42,7 @@ import javax.swing.text.BadLocationException;
  *
  * @author Bastien
  */
-public class FeedView extends javax.swing.JPanel {
+public class FeedView extends javax.swing.JPanel implements PopUpMenu.OnClickOnDropDownMenu {
     JList feedList;
     JList feedListContent;
     DefaultListModel model;
@@ -43,7 +50,11 @@ public class FeedView extends javax.swing.JPanel {
     FeedListRenderer customCell = new FeedListRenderer();
     ArticleDetailView DetailPanel;
     JScrollPane spane;
+    Boolean DetailViewOpen;
+    Boolean UserViewOpen;
     int currentPage;
+    DefaultListModel usernames = new DefaultListModel();
+    JScrollPane UserListpane;
     
     private OnFeedViewEventRaised FeedEvent;
     
@@ -59,6 +70,8 @@ public class FeedView extends javax.swing.JPanel {
         this.LoginSettings.setText(UserModel.Instance.getLogin());
         this.currentPage = 1;
         this.PageLabel.setText(String.valueOf(this.currentPage));
+        this.DetailViewOpen = false;
+        this.UserViewOpen = false;
         initFeedListView();
         initContentFeedView();
     }
@@ -72,21 +85,38 @@ public class FeedView extends javax.swing.JPanel {
         feedList.setCellRenderer(customCell);
         
         feedList.setSelectedIndex(0);
-        feedList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent event) {
-                if (!event.getValueIsAdjusting()) {
+        feedList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                if (evt.getClickCount() >= 2) {
                     setCurrentPage(1);
                     if (feedList.getSelectedIndex() == 0) {
                         FeedEvent.getAllFeed(-1, currentPage);
                     } else {
+                        // System.out.println(feedList.getSelectedIndex() - 1);
                         FeedEvent.getAllFeed(UserModel.Instance.getUserFeeds().get(feedList.getSelectedIndex() - 1).getId(), currentPage);
                     }
                     FeedName.setText(feedList.getSelectedValue().toString());
                 }
             }
         });
+        PopUpMenu menu = new PopUpMenu();
+        menu.setFeedPopUpEvent(this);
+        feedList.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    JList list = (JList) e.getSource();
+                    int index = list.locationToIndex(e.getPoint());
+                    list.setSelectedIndex(index);
+                    if (index != 0) {
+                        menu.setIndexToDelete(index);
+                        menu.show(e.getComponent(), e.getX(), e.getY());
+                    }
+                }
+            }
+
+        });
         JScrollPane pane = new JScrollPane(feedList);
+        pane.setBorder(null);
         JButton addButton = new JButton("Add Element");
         this.FeedListPanel.add(pane, BorderLayout.CENTER);
         this.FeedListPanel.add(addButton, BorderLayout.PAGE_END);
@@ -98,10 +128,16 @@ public class FeedView extends javax.swing.JPanel {
     }
     
     public void reloadFeed() {
+        if (model.size() > 1) {
+            model.removeAllElements();
+            model.addElement("All Articles");
+        }
         for (int i = 0; i < UserModel.Instance.getUserFeeds().size(); i++) {
             //+ 1 to leave the "Tous" on top of the list
             model.add(i + 1, UserModel.Instance.getUserFeeds().get(i).getName());
         }
+        feedList.revalidate();
+        feedList.repaint();
     }
     
     public void initContentFeedView() {
@@ -110,7 +146,7 @@ public class FeedView extends javax.swing.JPanel {
         feedListContent = new JList(ContentModel);
         DefaultListCellRenderer renderer = (DefaultListCellRenderer)feedListContent.getCellRenderer();
         renderer.setHorizontalAlignment(JLabel.CENTER);
-        spane = new JScrollPane(feedListContent);
+        spane = new JScrollPane(feedListContent);        
         FeedPanel.add(spane, BorderLayout.CENTER);
         feedListContent.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
@@ -129,6 +165,7 @@ public class FeedView extends javax.swing.JPanel {
                     }
                     FeedPanel.remove(spane);
                     FeedPanel.add(DetailPanel, BorderLayout.CENTER);
+                    DetailViewOpen = true;
                     BackButton.setEnabled(true);
                     feedListContent.setVisible(false);
                     spane.setVisible(false);
@@ -138,10 +175,20 @@ public class FeedView extends javax.swing.JPanel {
         });
     }
 
+    @Override
+    public void OnDeleteFeed(int indexFeed) {
+        System.out.println(indexFeed + "LOL");
+       // feedList.setSelectedIndex(indexFeed - 1);
+        FeedEvent.DeleteFeed(UserModel.Instance.getUserFeeds().get(indexFeed - 1).getId());
+        
+    }
+    
     public void RefreshAndDumpArticles() {
         ContentModel.removeAllElements();
-        if (!feedListContent.isVisible()) {
+        if (DetailViewOpen) {
             CloseDetailView();
+        } else if (UserViewOpen) {
+            CloseUserView();
         }
         for (int i = 0; i < AllArticlesModel.Instance.getAllArticles().size(); i++) {
             Articles article = AllArticlesModel.Instance.getAllArticles().get(i);
@@ -150,8 +197,20 @@ public class FeedView extends javax.swing.JPanel {
     }
     
     void CloseDetailView() {
+        DetailViewOpen = false;
         FeedPanel.remove(DetailPanel);
         DetailPanel = null;
+        FeedPanel.add(spane, BorderLayout.CENTER);
+        feedListContent.setVisible(true);
+        spane.setVisible(true);
+        BackButton.setEnabled(false);
+        FeedPanel.revalidate();
+    }
+    
+    void CloseUserView() {
+        UserViewOpen = false;
+        FeedPanel.remove(UserListpane);
+        UserListpane = null;
         FeedPanel.add(spane, BorderLayout.CENTER);
         feedListContent.setVisible(true);
         spane.setVisible(true);
@@ -187,12 +246,16 @@ public class FeedView extends javax.swing.JPanel {
             System.out.println("Cancelled");
         }
     }
+
     
     //Raise Events
     public interface OnFeedViewEventRaised {
         void OnAddFeedComplete(String name, String URL);
         void getAllFeed(int id, int page);
+        void UpdateUserInfos(String username, String Password, Boolean type);
+        void getAllUsers();
         void logout();
+        void DeleteFeed(int feedid);
     }
     
     public void setOnFeedViewEventRaised(OnFeedViewEventRaised connectEvent) {
@@ -206,6 +269,75 @@ public class FeedView extends javax.swing.JPanel {
             this.PreviousPageButton.setEnabled(true);
         } else {
             this.PreviousPageButton.setEnabled(false);
+        }
+    }
+    
+    public void DisplayUserList(List<UsersResponse.User> users) {
+        this.FeedName.setText("USER LIST");
+        usernames.removeAllElements();
+        users.stream().forEach((user) -> {
+            usernames.addElement(user.getUsername() + "      [" + user.getType() + "]");
+            System.out.println(user.getUsername() + "      [" + user.getType() + "]");
+        });
+        if (DetailViewOpen) {
+            DetailViewOpen = false;
+            FeedPanel.remove(DetailPanel);
+            DetailPanel = null;
+        } else {
+            FeedPanel.remove(spane);
+        }
+        if (UserListpane != null) {
+            FeedPanel.remove(UserListpane);
+        }
+        this.UserViewOpen = true;
+        JList userList = new JList(usernames);
+        UserListpane = new JScrollPane(userList);
+        DefaultListCellRenderer renderer = (DefaultListCellRenderer) userList.getCellRenderer();
+        userList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                JList list = (JList) evt.getSource();
+                if (evt.getClickCount() >= 2) {
+                    int index = list.locationToIndex(evt.getPoint());
+                    UsersResponse.User User = users.get(index);
+                    Boolean isAdmin = (User.getType().equals("admin")) ? true : false;
+                    openChangeInfoUser(User.getUsername(), isAdmin);
+                }
+            }
+        });
+        renderer.setHorizontalAlignment(JLabel.CENTER);
+        FeedPanel.add(UserListpane, BorderLayout.CENTER);
+        FeedPanel.revalidate();
+        FeedPanel.repaint();
+    }
+    
+    void openChangeInfoUser(String username, Boolean isAdmin) {
+        JTextField loginField = new JTextField(username);
+        loginField.setEditable(false);
+        JPasswordField field2 = new JPasswordField(""); 
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("Login :"));
+        panel.add(loginField);
+        panel.add(new JLabel("Password :"));
+        panel.add(field2);
+        JRadioButton checkBox = new JRadioButton("admin");
+        if (UserModel.Instance.getIsAdmin()) {
+            checkBox.setSelected(isAdmin);
+            panel.add(checkBox);
+        }
+        int result = JOptionPane.showConfirmDialog(null, panel, "Change user informations",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            if (loginField.getText().isEmpty() || field2.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "A field is empty!", "Add feed", JOptionPane.ERROR_MESSAGE);
+            } else {
+                if (FeedEvent != null) {
+                    FeedEvent.UpdateUserInfos(loginField.getText(), field2.getText(), checkBox.isSelected());
+                }
+            }
+            FeedListPanel.revalidate();
+            FeedListPanel.repaint();
+        } else {
+            System.out.println("Cancelled");
         }
     }
     
@@ -257,6 +389,11 @@ public class FeedView extends javax.swing.JPanel {
         UserInfosPanel.add(FEEDIFY, gridBagConstraints);
 
         LoginSettings.setText("Login");
+        LoginSettings.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                LoginSettingsActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -283,7 +420,7 @@ public class FeedView extends javax.swing.JPanel {
         );
         FeedListPanelLayout.setVerticalGroup(
             FeedListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 509, Short.MAX_VALUE)
         );
 
         MenuPanelHolder.add(FeedListPanel, java.awt.BorderLayout.CENTER);
@@ -401,12 +538,26 @@ public class FeedView extends javax.swing.JPanel {
     }//GEN-LAST:event_PreviousPageButtonActionPerformed
 
     private void BackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackButtonActionPerformed
-        CloseDetailView();
+       if (this.DetailViewOpen) {
+            CloseDetailView();
+       } else if (this.UserViewOpen) {
+           CloseUserView();
+       }
     }//GEN-LAST:event_BackButtonActionPerformed
 
     private void LogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutActionPerformed
-        FeedEvent.logout();
+        if (FeedEvent != null) {
+            FeedEvent.logout();  
+        }
     }//GEN-LAST:event_LogoutActionPerformed
+
+    private void LoginSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginSettingsActionPerformed
+        if (UserModel.Instance.getIsAdmin()) {
+            FeedEvent.getAllUsers();
+        } else {
+            openChangeInfoUser(UserModel.Instance.getLogin(), false);
+        }
+    }//GEN-LAST:event_LoginSettingsActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

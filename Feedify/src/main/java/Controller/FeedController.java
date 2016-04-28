@@ -7,17 +7,20 @@ package Controller;
 
 import API.RestClient;
 import Model.AllArticlesModel;
+import Model.DeleteFeedResponse;
 import Model.GetFeedsResponse;
 import Model.UserModel;
 import Model.Feed;
 import Model.Feed.FeedPost;
 import Model.GetArticleResponse;
-import Model.GetArticleResponse.Articles;
 import Model.LogoutResponse;
+import Model.User.UpdateUserResponse;
+import Model.User.UpdateUserResponse.User;
+import Model.User.UsersResponse;
 import View.FeedView;
 import java.util.List;
-import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -50,10 +53,10 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
                 if (response.body() != null) {
                     List<Feed> feedList = response.body().getFeeds();
                     if (feedList.size() != 0) {
+                        UserModel.Instance.getUserFeeds().removeAll(UserModel.Instance.getUserFeeds());
                         for (Feed f : feedList) {
-                            if (!UserModel.Instance.getUserFeeds().contains(f)) {
-                                UserModel.Instance.getUserFeeds().add(f);
-                            }
+                            System.out.println("TO ADD = " + f.getUrl());
+                            UserModel.Instance.getUserFeeds().add(f);
                          }
                         feedView.reloadFeed();
                         getAllFeed(-1, 1);
@@ -141,6 +144,71 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
             public void onFailure(Call<LogoutResponse> call, Throwable t) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
+        });
+    }
+
+    @Override
+    public void getAllUsers() {
+        Call<UsersResponse> call = RestClient.get(UserModel.Instance.getToken()).getAllUser();
+        call.enqueue(new Callback<UsersResponse>() {
+            @Override
+            public void onResponse(Call<UsersResponse> call, Response<UsersResponse> response) {
+                if (response.body() != null) {
+                    System.out.println("slt");
+                    feedView.DisplayUserList(response.body().getUsers());
+                }
+            } 
+
+            @Override
+            public void onFailure(Call<UsersResponse> call, Throwable t) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+             
+        });
+    }
+
+    @Override
+    public void UpdateUserInfos(String username, String Password, Boolean typeB) {
+        String type = typeB ? "admin" : "user";
+        User u = new User(username, Password, type);
+        Call<UpdateUserResponse> call = RestClient.get(UserModel.Instance.getToken()).updateUser(username, u);
+        call.enqueue(new Callback<UpdateUserResponse>() {
+            @Override
+            public void onResponse(Call<UpdateUserResponse> call, Response<UpdateUserResponse> response) {
+                if (response.body() != null) {
+                    JOptionPane.showMessageDialog(null, "User informations have been updated", "Update user Infos", JOptionPane.INFORMATION_MESSAGE);
+                    getAllUsers();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UpdateUserResponse> call, Throwable t) {
+            }
+        });
+        
+    }
+
+    @Override
+    public void DeleteFeed(int feedid) {
+        Call<DeleteFeedResponse> call = RestClient.get(UserModel.Instance.getToken()).deleteFeed(feedid);
+        call.enqueue(new Callback<DeleteFeedResponse>(){
+            @Override
+            public void onResponse(Call<DeleteFeedResponse> call, Response<DeleteFeedResponse> response) {
+                if (response.body() != null) {
+                    for (int i = 0; i < UserModel.Instance.getUserFeeds().size(); i++) {
+                        if (UserModel.Instance.getUserFeeds().get(i).getId() == feedid) {
+                            UserModel.Instance.getUserFeeds().remove(UserModel.Instance.getUserFeeds().get(i));
+                        }
+                    }
+                    getFeedForDisplay();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DeleteFeedResponse> call, Throwable t) {
+                
+            }
+            
         });
     }
 }

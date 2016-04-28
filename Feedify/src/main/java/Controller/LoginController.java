@@ -8,6 +8,7 @@ package Controller;
 import Model.RegisterResponse;
 import Model.RegisterResponse.RegisterPost;
 import API.RestClient;
+import Model.GetUserResponse;
 import Model.LoginResponse;
 import Model.LoginResponse.LoginPost;
 import Model.UserModel;
@@ -73,7 +74,7 @@ public class LoginController implements LoginView.OnConnectButtonClick {
                     UserModel user = new UserModel();
                     user.Instance.setToken(response.body().getToken());
                     user.Instance.setLogin(login);
-                    FeedController FeedVC = new FeedController(window);
+                    getThisUser(login);
                 } else {
                     JOptionPane.showMessageDialog(null, "Mauvais nom de compte ou mot de passe", "Connection", JOptionPane.ERROR_MESSAGE);
                 }
@@ -85,4 +86,27 @@ public class LoginController implements LoginView.OnConnectButtonClick {
             }
         });
     }
+    
+    void getThisUser(String userName) {
+        Call<GetUserResponse> call = RestClient.get(UserModel.Instance.getToken()).getUser(userName);
+        call.enqueue(new Callback<GetUserResponse>() {
+            @Override
+            public void onResponse(Call<GetUserResponse> call, Response<GetUserResponse> response) {
+                if (response.body() != null) {
+                    if (response.body().getType().equals("admin")) {
+                        UserModel.Instance.setIsAdmin(true);
+                    } else {
+                        UserModel.Instance.setIsAdmin(false);
+                    }
+                    FeedController FeedVC = new FeedController(window);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetUserResponse> call, Throwable t) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+    }
+    
 }
