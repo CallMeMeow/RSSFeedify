@@ -14,11 +14,15 @@ import Model.Feed;
 import Model.Feed.FeedPost;
 import Model.GetArticleResponse;
 import Model.LogoutResponse;
+import Model.ReadArticleResponse;
 import Model.User.UpdateUserResponse;
 import Model.User.UpdateUserResponse.User;
 import Model.User.UsersResponse;
 import View.FeedView;
+import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import retrofit2.Call;
@@ -32,6 +36,7 @@ import retrofit2.Response;
 public  class FeedController implements FeedView.OnFeedViewEventRaised {
     FeedView feedView;
     JFrame window;
+    Boolean DoNotReloadFeed = false;
     
     public FeedController(JFrame win) {
         new AllArticlesModel();
@@ -53,13 +58,16 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
                 if (response.body() != null) {
                     List<Feed> feedList = response.body().getFeeds();
                     if (feedList.size() != 0) {
-                        UserModel.Instance.getUserFeeds().removeAll(UserModel.Instance.getUserFeeds());
+                        UserModel.Instance.getUserFeeds().clear();
                         for (Feed f : feedList) {
-                            System.out.println("TO ADD = " + f.getUrl());
                             UserModel.Instance.getUserFeeds().add(f);
                          }
                         feedView.reloadFeed();
-                        getAllFeed(-1, 1);
+                        if (!DoNotReloadFeed) {
+                            getAllFeed(-1, 1);
+                        } else {
+                            DoNotReloadFeed = false;
+                        }
                     }
                 } else {
                     System.out.println("GetFeed " + response.code());
@@ -136,7 +144,11 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
             public void onResponse(Call<LogoutResponse> call, Response<LogoutResponse> response) {
                 if (response.body() != null) {
                     feedView = null;
-                    new LoginController(window);
+                    try {
+                        new LoginController(window);
+                    } catch (IOException ex) {
+                        Logger.getLogger(FeedController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
 
@@ -154,7 +166,6 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
             @Override
             public void onResponse(Call<UsersResponse> call, Response<UsersResponse> response) {
                 if (response.body() != null) {
-                    System.out.println("slt");
                     feedView.DisplayUserList(response.body().getUsers());
                 }
             } 
@@ -178,6 +189,8 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
                 if (response.body() != null) {
                     JOptionPane.showMessageDialog(null, "User informations have been updated", "Update user Infos", JOptionPane.INFORMATION_MESSAGE);
                     getAllUsers();
+                } else {
+                    System.out.println(response.code());
                 }
             }
 
@@ -207,6 +220,29 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
             @Override
             public void onFailure(Call<DeleteFeedResponse> call, Throwable t) {
                 
+            }
+            
+        });
+    }
+
+    @Override
+    public void MarkArticleAsRead(int articleid) {
+        Call<ReadArticleResponse> call = RestClient.get(UserModel.Instance.getToken()).readArticle(articleid);
+        call.enqueue(new Callback<ReadArticleResponse>() {
+            @Override
+            public void onResponse(Call<ReadArticleResponse> call, Response<ReadArticleResponse> response) {
+                if (response.body() != null) {
+                    System.out.println(response.body().getMessage());
+                    DoNotReloadFeed = true;
+                    getFeedForDisplay();
+                } else {
+                    System.out.println(response.code() + "    " + articleid);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ReadArticleResponse> call, Throwable t) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
             
         });

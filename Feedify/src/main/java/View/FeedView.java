@@ -11,6 +11,7 @@ import Model.User.UsersResponse;
 import Model.UserModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -134,10 +135,10 @@ public class FeedView extends javax.swing.JPanel implements PopUpMenu.OnClickOnD
         }
         for (int i = 0; i < UserModel.Instance.getUserFeeds().size(); i++) {
             //+ 1 to leave the "Tous" on top of the list
-            model.add(i + 1, UserModel.Instance.getUserFeeds().get(i).getName());
+            model.add(i + 1, UserModel.Instance.getUserFeeds().get(i).getName());// + "   " + UserModel.Instance.getUserFeeds().get(i).getNew_articles());
         }
-        feedList.revalidate();
-        feedList.repaint();
+        feedList.setSelectedIndex(0);
+        FeedName.setText("All Articles");
     }
     
     public void initContentFeedView() {
@@ -146,18 +147,18 @@ public class FeedView extends javax.swing.JPanel implements PopUpMenu.OnClickOnD
         feedListContent = new JList(ContentModel);
         DefaultListCellRenderer renderer = (DefaultListCellRenderer)feedListContent.getCellRenderer();
         renderer.setHorizontalAlignment(JLabel.CENTER);
-        spane = new JScrollPane(feedListContent);        
+        spane = new JScrollPane(feedListContent);    
         FeedPanel.add(spane, BorderLayout.CENTER);
         feedListContent.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent evt) {
                 JList list = (JList) evt.getSource();
                 if (evt.getClickCount() >= 2) {
                     int index = list.locationToIndex(evt.getPoint());
-                    System.out.println(AllArticlesModel.Instance.getAllArticles().get(index).getTitle());
-                    
                     DetailPanel = new ArticleDetailView();
                     try {
                         DetailPanel.setDesignWithData(AllArticlesModel.Instance.getAllArticles().get(index));
+                        
                     } catch (BadLocationException ex) {
                         Logger.getLogger(FeedView.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (IOException ex) {
@@ -177,10 +178,7 @@ public class FeedView extends javax.swing.JPanel implements PopUpMenu.OnClickOnD
 
     @Override
     public void OnDeleteFeed(int indexFeed) {
-        System.out.println(indexFeed + "LOL");
-       // feedList.setSelectedIndex(indexFeed - 1);
         FeedEvent.DeleteFeed(UserModel.Instance.getUserFeeds().get(indexFeed - 1).getId());
-        
     }
     
     public void RefreshAndDumpArticles() {
@@ -193,6 +191,8 @@ public class FeedView extends javax.swing.JPanel implements PopUpMenu.OnClickOnD
         for (int i = 0; i < AllArticlesModel.Instance.getAllArticles().size(); i++) {
             Articles article = AllArticlesModel.Instance.getAllArticles().get(i);
             ContentModel.addElement(article.getTitle());
+            //previewPanel.add(new ArticlePreviewView(article.getTitle(), article.getPreview()));
+            
         }
     }
     
@@ -201,7 +201,7 @@ public class FeedView extends javax.swing.JPanel implements PopUpMenu.OnClickOnD
         FeedPanel.remove(DetailPanel);
         DetailPanel = null;
         FeedPanel.add(spane, BorderLayout.CENTER);
-        feedListContent.setVisible(true);
+        feedListContent.setVisible(true); 
         spane.setVisible(true);
         BackButton.setEnabled(false);
         FeedPanel.revalidate();
@@ -256,6 +256,7 @@ public class FeedView extends javax.swing.JPanel implements PopUpMenu.OnClickOnD
         void getAllUsers();
         void logout();
         void DeleteFeed(int feedid);
+        void MarkArticleAsRead(int articleid);
     }
     
     public void setOnFeedViewEventRaised(OnFeedViewEventRaised connectEvent) {
@@ -324,7 +325,8 @@ public class FeedView extends javax.swing.JPanel implements PopUpMenu.OnClickOnD
             checkBox.setSelected(isAdmin);
             panel.add(checkBox);
         }
-        int result = JOptionPane.showConfirmDialog(null, panel, "Change user informations",
+        
+       int result = JOptionPane.showConfirmDialog(null, panel, "Change user informations",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
             if (loginField.getText().isEmpty() || field2.getText().isEmpty()) {
@@ -339,6 +341,12 @@ public class FeedView extends javax.swing.JPanel implements PopUpMenu.OnClickOnD
         } else {
             System.out.println("Cancelled");
         }
+    }
+    
+    void deleteAccountWarning() {
+        int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete ta mere?", "WARNING",
+                JOptionPane.OK_OPTION, JOptionPane.WARNING_MESSAGE);
+        FeedEvent.logout();        
     }
     
     /**

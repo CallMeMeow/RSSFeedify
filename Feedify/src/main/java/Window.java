@@ -1,5 +1,10 @@
 
 import Controller.LoginController;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -78,7 +83,11 @@ public class Window extends javax.swing.JFrame {
             public void run() {
                 Window win = new Window();
                 win.setVisible(true);
-                LoginController logVC = new LoginController(win);
+                try {
+                    LoginController logVC = new LoginController(win);
+                } catch (IOException ex) {
+                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

@@ -14,6 +14,7 @@ import Model.GetUserResponse;
 import Model.LoginResponse;
 import Model.LoginResponse.LoginPost;
 import Model.LogoutResponse;
+import Model.ReadArticleResponse;
 import Model.RegisterResponse;
 import Model.RegisterResponse.RegisterPost;
 import Model.User.UpdateUserResponse;
@@ -32,6 +33,7 @@ import retrofit2.http.Path;
  * @author Bastien
  */
 public interface ApiService {
+    //login - logout - register
     @POST("register")
     Call<RegisterResponse>      register(@Body RegisterPost rPost);
     
@@ -40,6 +42,8 @@ public interface ApiService {
     
     @POST("logout")
     Call<LogoutResponse>    logout();
+    
+    //Feeds and articles
     
     @GET("feeds")
     Call<GetFeedsResponse>  feeds();
@@ -55,6 +59,9 @@ public interface ApiService {
 
     @GET("feed/{feedid}/articles/{page}")
     Call<GetArticleResponse>      getAllFeedById(@Path("feedid") int id, @Path("page") int page);
+    
+    @POST("article/as_read/{id}")
+    Call<ReadArticleResponse>       readArticle(@Path("id") int id);
     
     //Users
     

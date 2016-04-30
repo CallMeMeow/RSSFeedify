@@ -12,8 +12,15 @@ import Model.GetUserResponse;
 import Model.LoginResponse;
 import Model.LoginResponse.LoginPost;
 import Model.UserModel;
-import View.FeedView;
 import View.LoginView;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import retrofit2.Call;
@@ -28,7 +35,28 @@ import retrofit2.Response;
 public class LoginController implements LoginView.OnConnectButtonClick {
     JFrame window;
     
-    public LoginController(JFrame win) {
+    public LoginController(JFrame win) throws IOException {
+        UserModel user = new UserModel();
+        BufferedReader in;
+        try {
+            in = new BufferedReader(new FileReader(".log.txt"));
+            
+            String line;
+            Boolean isLogin = true;
+            while ((line = in.readLine()) != null) {
+                if (isLogin) {
+                    user.Instance.setLogin(line);
+                    isLogin = false;
+                } else {
+                    user.Instance.setToken(line);
+                }
+            }
+            in.close();
+            getThisUser(user.Instance.getLogin());
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         LoginView logView = new LoginView();
         logView.setOnConnectButtonClick(this);
         win.setContentPane(logView);
@@ -48,15 +76,15 @@ public class LoginController implements LoginView.OnConnectButtonClick {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
                 if (response.body() != null) {
-                    JOptionPane.showMessageDialog(null, "Votre compte a bien été crée", "Register", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "You account has been created", "Register", JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Votre compte existe déja ou vous avez entrer de mauvais paramètres", "Register", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "This account already exist or you entered wrong parameters", "Register", JOptionPane.ERROR_MESSAGE);
                 }
             }
 
             @Override
             public void onFailure(Call<RegisterResponse> call, Throwable t) {
-                JOptionPane.showMessageDialog(null, "La requete Register à échouer", "Register", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Register request failed", "Register", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
@@ -71,18 +99,28 @@ public class LoginController implements LoginView.OnConnectButtonClick {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.body() != null) {
-                    UserModel user = new UserModel();
-                    user.Instance.setToken(response.body().getToken());
-                    user.Instance.setLogin(login);
+                    UserModel.Instance.setToken(response.body().getToken());
+                    UserModel.Instance.setLogin(login);
+                    try {
+                        PrintWriter writer;
+                        writer = new PrintWriter(".log.txt", "UTF-8");
+                        writer.println(UserModel.Instance.getLogin());
+                        writer.println(UserModel.Instance.getToken());
+                        writer.close();
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (UnsupportedEncodingException ex) {
+                        Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     getThisUser(login);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Mauvais nom de compte ou mot de passe", "Connection", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Wrong login or password", "Connexion", JOptionPane.ERROR_MESSAGE);
                 }
             }
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
-                JOptionPane.showMessageDialog(null, "La requete de connection à échouer", "Connection", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Login request failed", "Connexion", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
