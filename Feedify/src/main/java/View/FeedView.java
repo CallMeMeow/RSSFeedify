@@ -5,10 +5,10 @@
  */
 package View;
 
-import Model.AllArticlesModel;
-import Model.GetArticleResponse.Articles;
+import Model.Articles.AllArticlesModel;
+import Model.Articles.GetArticleResponse.Articles;
 import Model.User.UsersResponse;
-import Model.UserModel;
+import Model.User.UserModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;

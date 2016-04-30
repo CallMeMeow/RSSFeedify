@@ -5,18 +5,18 @@
  */
 package API;
 
-import Model.DeleteFeedResponse;
-import Model.Feed;
-import Model.Feed.FeedPost;
-import Model.GetArticleResponse;
-import Model.GetFeedsResponse;
-import Model.GetUserResponse;
-import Model.LoginResponse;
-import Model.LoginResponse.LoginPost;
-import Model.LogoutResponse;
-import Model.ReadArticleResponse;
-import Model.RegisterResponse;
-import Model.RegisterResponse.RegisterPost;
+import Model.Feeds.DeleteFeedResponse;
+import Model.Feeds.Feed;
+import Model.Feeds.Feed.FeedPost;
+import Model.Articles.GetArticleResponse;
+import Model.Feeds.GetFeedsResponse;
+import Model.User.GetUserResponse;
+import Model.User.LoginResponse;
+import Model.User.LoginResponse.LoginPost;
+import Model.User.LogoutResponse;
+import Model.Articles.ReadArticleResponse;
+import Model.User.RegisterResponse;
+import Model.User.RegisterResponse.RegisterPost;
 import Model.User.UpdateUserResponse;
 import Model.User.UpdateUserResponse.User;
 import Model.User.UsersResponse;

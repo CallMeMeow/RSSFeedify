@@ -5,7 +5,7 @@
  */
 package View;
 
-import Model.GetArticleResponse.Articles;
+import Model.Articles.GetArticleResponse.Articles;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URISyntaxException;

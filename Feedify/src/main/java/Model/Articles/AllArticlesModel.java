@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Model;
+package Model.Articles;
 
-import Model.GetArticleResponse.Articles;
+import Model.Articles.GetArticleResponse.Articles;
 import java.util.List;
 import java.util.Map;
 

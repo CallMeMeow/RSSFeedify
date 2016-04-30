@@ -6,15 +6,15 @@
 package Controller;
 
 import API.RestClient;
-import Model.AllArticlesModel;
-import Model.DeleteFeedResponse;
-import Model.GetFeedsResponse;
-import Model.UserModel;
-import Model.Feed;
-import Model.Feed.FeedPost;
-import Model.GetArticleResponse;
-import Model.LogoutResponse;
-import Model.ReadArticleResponse;
+import Model.Articles.AllArticlesModel;
+import Model.Feeds.DeleteFeedResponse;
+import Model.Feeds.GetFeedsResponse;
+import Model.User.UserModel;
+import Model.Feeds.Feed;
+import Model.Feeds.Feed.FeedPost;
+import Model.Articles.GetArticleResponse;
+import Model.User.LogoutResponse;
+import Model.Articles.ReadArticleResponse;
 import Model.User.UpdateUserResponse;
 import Model.User.UpdateUserResponse.User;
 import Model.User.UsersResponse;

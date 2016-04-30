@@ -5,13 +5,13 @@
  */
 package Controller;
 
-import Model.RegisterResponse;
-import Model.RegisterResponse.RegisterPost;
+import Model.User.RegisterResponse;
+import Model.User.RegisterResponse.RegisterPost;
 import API.RestClient;
-import Model.GetUserResponse;
-import Model.LoginResponse;
-import Model.LoginResponse.LoginPost;
-import Model.UserModel;
+import Model.User.GetUserResponse;
+import Model.User.LoginResponse;
+import Model.User.LoginResponse.LoginPost;
+import Model.User.UserModel;
 import View.LoginView;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
