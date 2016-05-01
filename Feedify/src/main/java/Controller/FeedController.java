@@ -15,6 +15,7 @@ import Model.Feeds.Feed.FeedPost;
 import Model.Articles.GetArticleResponse;
 import Model.User.LogoutResponse;
 import Model.Articles.ReadArticleResponse;
+import Model.Feeds.RefreshFeedResponse;
 import Model.User.UpdateUserResponse;
 import Model.User.UpdateUserResponse.User;
 import Model.User.UsersResponse;
@@ -120,10 +121,11 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
             public void onResponse(Call<Feed> call, Response<Feed> response) {
                 if (response.body() != null) {
                     System.out.println(response.code());
-                    if (!UserModel.Instance.getUserFeeds().contains(response.body())) {
+                    RefreshFeed(response.body());
+                   /* if (!UserModel.Instance.getUserFeeds().contains(response.body())) {
                         UserModel.Instance.getUserFeeds().add(response.body());
                         feedView.addThisFeedToList(response.body().getName());
-                    }
+                    }*/
                 } else {
                     System.out.println(response.code() + " CODE");
                 }
@@ -131,11 +133,38 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
 
             @Override
             public void onFailure(Call<Feed> call, Throwable t) {
-                System.out.println("slt");
+                System.out.println("failed");
             }
         });
     }
 
+    void RefreshFeed(Feed feed) {
+        Call<RefreshFeedResponse> call = RestClient.get(UserModel.Instance.getToken()).refreshFeed(feed.getId());
+        call.enqueue(new Callback<RefreshFeedResponse>() {
+            @Override
+            public void onResponse(Call<RefreshFeedResponse> call, Response<RefreshFeedResponse> response) {
+                if (response.body() != null) {
+                     if (!UserModel.Instance.getUserFeeds().contains(response.body())) {
+                        UserModel.Instance.getUserFeeds().add(feed);
+                        feedView.addThisFeedToList(feed.getName());
+                    }
+                }
+                else {
+                    DeleteFeed(feed.getId());
+                    JOptionPane.showMessageDialog(null, "The feed : "
+                            + feed.getUrl()
+                            + " you tried to enter is invalid", "Add feed", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RefreshFeedResponse> call, Throwable t) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+            
+        });
+    }
+    
     @Override
     public void logout() {
         Call<LogoutResponse> call = RestClient.get(UserModel.Instance.getToken()).logout();

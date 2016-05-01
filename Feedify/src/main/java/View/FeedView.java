@@ -11,7 +11,6 @@ import Model.User.UsersResponse;
 import Model.User.UserModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,7 +23,6 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -33,10 +31,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 
 /**
@@ -91,10 +86,14 @@ public class FeedView extends javax.swing.JPanel implements PopUpMenu.OnClickOnD
                 if (evt.getClickCount() >= 2) {
                     setCurrentPage(1);
                     if (feedList.getSelectedIndex() == 0) {
-                        FeedEvent.getAllFeed(-1, currentPage);
+                        if (FeedEvent != null) {
+                            FeedEvent.getAllFeed(-1, currentPage);
+                        }
                     } else {
                         // System.out.println(feedList.getSelectedIndex() - 1);
-                        FeedEvent.getAllFeed(UserModel.Instance.getUserFeeds().get(feedList.getSelectedIndex() - 1).getId(), currentPage);
+                        if (FeedEvent != null) {
+                            FeedEvent.getAllFeed(UserModel.Instance.getUserFeeds().get(feedList.getSelectedIndex() - 1).getId(), currentPage);
+                        }
                     }
                     FeedName.setText(feedList.getSelectedValue().toString());
                 }
@@ -118,7 +117,7 @@ public class FeedView extends javax.swing.JPanel implements PopUpMenu.OnClickOnD
         });
         JScrollPane pane = new JScrollPane(feedList);
         pane.setBorder(null);
-        JButton addButton = new JButton("Add Element");
+        JButton addButton = new JButton("Add Feed");
         this.FeedListPanel.add(pane, BorderLayout.CENTER);
         this.FeedListPanel.add(addButton, BorderLayout.PAGE_END);
         addButton.addActionListener(new ActionListener() {
@@ -178,7 +177,9 @@ public class FeedView extends javax.swing.JPanel implements PopUpMenu.OnClickOnD
 
     @Override
     public void OnDeleteFeed(int indexFeed) {
-        FeedEvent.DeleteFeed(UserModel.Instance.getUserFeeds().get(indexFeed - 1).getId());
+        if (FeedEvent != null) {
+            FeedEvent.DeleteFeed(UserModel.Instance.getUserFeeds().get(indexFeed - 1).getId());
+        }
     }
     
     public void RefreshAndDumpArticles() {
@@ -230,11 +231,11 @@ public class FeedView extends javax.swing.JPanel implements PopUpMenu.OnClickOnD
         panel.add(field1);
         panel.add(new JLabel("URL :"));
         panel.add(field2);
-        int result = JOptionPane.showConfirmDialog(null, panel, "Entrez les infos du feed",
+        int result = JOptionPane.showConfirmDialog(null, panel, "Enter feed informations",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
             if (field1.getText().isEmpty() || field2.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Un des champs est vide !", "Add feed", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "There is an empty field", "Add feed", JOptionPane.ERROR_MESSAGE);
             } else {
                 if (FeedEvent != null) {
                     FeedEvent.OnAddFeedComplete(field1.getText(), field2.getText());    
@@ -346,7 +347,9 @@ public class FeedView extends javax.swing.JPanel implements PopUpMenu.OnClickOnD
     void deleteAccountWarning() {
         int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete ta mere?", "WARNING",
                 JOptionPane.OK_OPTION, JOptionPane.WARNING_MESSAGE);
-        FeedEvent.logout();        
+        if (FeedEvent != null) {
+            FeedEvent.logout();     
+        }
     }
     
     /**
@@ -531,17 +534,25 @@ public class FeedView extends javax.swing.JPanel implements PopUpMenu.OnClickOnD
 
     private void NextPageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NextPageButtonActionPerformed
         if (feedList.getSelectedIndex() == 0) {
-            FeedEvent.getAllFeed(-1, currentPage + 1);
+            if (FeedEvent != null) {
+                FeedEvent.getAllFeed(-1, currentPage + 1);
+            }
         } else {
-            FeedEvent.getAllFeed(UserModel.Instance.getUserFeeds().get(feedList.getSelectedIndex() - 1).getId(), currentPage + 1);
+            if (FeedEvent != null) {
+                FeedEvent.getAllFeed(UserModel.Instance.getUserFeeds().get(feedList.getSelectedIndex() - 1).getId(), currentPage + 1);
+            }
         }
     }//GEN-LAST:event_NextPageButtonActionPerformed
 
     private void PreviousPageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PreviousPageButtonActionPerformed
         if (feedList.getSelectedIndex() == 0) {
-            FeedEvent.getAllFeed(-1, currentPage - 1);
+            if (FeedEvent != null) {
+                FeedEvent.getAllFeed(-1, currentPage - 1);
+            }
         } else {
-            FeedEvent.getAllFeed(UserModel.Instance.getUserFeeds().get(feedList.getSelectedIndex() - 1).getId(), currentPage - 1);
+            if (FeedEvent != null) {
+                FeedEvent.getAllFeed(UserModel.Instance.getUserFeeds().get(feedList.getSelectedIndex() - 1).getId(), currentPage - 1);
+            }
         }
     }//GEN-LAST:event_PreviousPageButtonActionPerformed
 
@@ -561,7 +572,9 @@ public class FeedView extends javax.swing.JPanel implements PopUpMenu.OnClickOnD
 
     private void LoginSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginSettingsActionPerformed
         if (UserModel.Instance.getIsAdmin()) {
-            FeedEvent.getAllUsers();
+            if (FeedEvent != null) {
+                FeedEvent.getAllUsers();
+            }
         } else {
             openChangeInfoUser(UserModel.Instance.getLogin(), false);
         }

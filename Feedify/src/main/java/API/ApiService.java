@@ -15,6 +15,7 @@ import Model.User.LoginResponse;
 import Model.User.LoginResponse.LoginPost;
 import Model.User.LogoutResponse;
 import Model.Articles.ReadArticleResponse;
+import Model.Feeds.RefreshFeedResponse;
 import Model.User.RegisterResponse;
 import Model.User.RegisterResponse.RegisterPost;
 import Model.User.UpdateUserResponse;
@@ -62,6 +63,9 @@ public interface ApiService {
     
     @POST("article/as_read/{id}")
     Call<ReadArticleResponse>       readArticle(@Path("id") int id);
+    
+    @GET("worker/refresh/feed/{id}")
+    Call<RefreshFeedResponse>       refreshFeed(@Path("id") int id);
     
     //Users
     
