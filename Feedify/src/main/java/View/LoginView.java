@@ -63,7 +63,7 @@ public class LoginView extends javax.swing.JPanel {
         add(TitleLabel, gridBagConstraints);
 
         LoginTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        LoginTextField.setText("do_f");
+        LoginTextField.setText("login");
         LoginTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 LoginTextFieldActionPerformed(evt);

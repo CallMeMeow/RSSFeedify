@@ -63,13 +63,14 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
                         for (Feed f : feedList) {
                             UserModel.Instance.getUserFeeds().add(f);
                          }
-                        feedView.reloadFeed();
+                        System.out.println("TEST");
                         if (!DoNotReloadFeed) {
                             getAllFeed(-1, 1);
                         } else {
                             DoNotReloadFeed = false;
                         }
                     }
+                    feedView.reloadFeed();
                 } else {
                     System.out.println("GetFeed " + response.code());
                 }
@@ -243,6 +244,8 @@ public  class FeedController implements FeedView.OnFeedViewEventRaised {
                         }
                     }
                     getFeedForDisplay();
+                }  else {
+                    System.out.println(response.code());
                 }
             }
 

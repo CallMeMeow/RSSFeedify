@@ -1,4 +1,3 @@
-
 import Controller.FeedController;
 import Controller.LoginController;
 import java.io.IOException;
@@ -21,13 +20,11 @@ public class LoginTests {
     LoginController logVC;
     
     @Before
-    public void CreateFeedController() {
+    public void CreateLoginController() {
         Window win = new Window();
         win.setVisible(true);
         try {
             this.logVC = new LoginController(win);
-            this.logVC.applyRegister("TESTUNIT", "TESTUNIT");
-            this.logVC.applyLogin("TESTUNIT", "TESTUNIT");
         } catch (IOException ex) {
             Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
         }
